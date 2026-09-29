@@ -1,8 +1,8 @@
 # STATE.md
 
 ## Abhi kaunsa version
-- Version: v2
-- Parts done: 2
+- Version: v3
+- Parts done: 3
 - IN PROGRESS: -
 
 ## Stack
@@ -44,13 +44,26 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
   - StickyBar.tsx: Fixed bottom action bar
   - Countdown.tsx: Live countdown timer text
   - Logo.tsx: Brand logo mark & name link
+- Part 3 (login/db/shell):
+  - supabase/001_init.sql: tables (users, queues, sessions, tokens, queue_events, push_subscriptions) + RLS + new-user trigger. SQL Editor me chalayein
+  - middleware.ts + lib/supabase/{env,client,server,middleware}.ts: session refresh, /app/* aur /onboarding/* login ke bina -> /login?next=
+  - lib/safeNext.ts, validateName.ts, useOnline.ts, authFlag.ts
+  - app/login/page.tsx + components/auth/LoginView.tsx, GoogleG.tsx: `/login`
+  - app/auth/callback/route.ts: OAuth code exchange, naam nahi -> /onboarding/name, warna next ya /app/scan
+  - app/onboarding/name/page.tsx + components/auth/NameForm.tsx
+  - app/app/layout.tsx (auth+naam guard) + components/shell/AppShell.tsx (BottomNav, session-expire Dialog)
+  - app/app/{tokens,scan,profile,business}/page.tsx: khaali tab pages (AppBar title); profile me Logout (components/shell/LogoutButton.tsx)
 - lib/brand.ts: brand name, contact details
 - lib/i18n.ts: Hinglish strings & `t(key)`
 
 ## Environment variables (sirf NAAM)
-- Abhi koi nahi (Part 3 me Supabase)
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+(.env.example dekhein, .env.local banayein)
 
 ## Kaise chalana hai
+- Supabase: project banayein, Auth > Providers > Google on, Auth > URL Configuration me Site URL + Redirect `http://localhost:3000/auth/callback` (deploy URL bhi), SQL Editor me supabase/001_init.sql chalayein
+- Google Cloud OAuth client ka redirect URI = Supabase ka callback URL
 - `npm install`
 - `npm run dev` (Dev server)
 - `npm run build` (Production build verification)
@@ -60,4 +73,4 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
 - QUESTIONS.md dekhein
 
 ## Agla part
-- Part 3 (Supabase DB schema + auth)
+- Part 4

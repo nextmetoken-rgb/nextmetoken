@@ -107,3 +107,12 @@ a{color:inherit}
 
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 
+
+/* Part 3: login, naam, tab shell */
+.login-page{position:relative;min-height:100dvh;padding-top:calc(var(--sp-16) + var(--safe-top));padding-bottom:calc(var(--safe-bottom) + 96px)}
+.login-back{position:absolute;top:calc(var(--safe-top) + var(--sp-2));left:var(--sp-2)}
+.login-logo{width:56px;height:56px;border-radius:var(--r-lg);background:var(--c-accent);color:var(--c-on-accent);display:grid;place-items:center}
+.login-legal{position:absolute;left:0;right:0;bottom:calc(var(--safe-bottom) + var(--sp-6));text-align:center;padding-inline:var(--page-pad)}
+.link-u{color:var(--c-accent);text-decoration:underline;text-underline-offset:2px}
+.name-page{padding-top:calc(var(--sp-12) + var(--safe-top));padding-bottom:calc(var(--safe-bottom) + 96px)}
+.tab-body{min-height:100dvh;padding-bottom:calc(var(--nav-h) + var(--safe-bottom))}
