@@ -45,3 +45,22 @@ spec bundle · referenced 01-foundations.md / 02-components.md / 03-screens-cust
 part6 · owner console realtime · Supabase Realtime publication/config source spec me exact setup nahi diya · client subscription + 5s polling fallback use kiya
 part6 · History/Settings/Delete menu destinations/behavior · Part 6 me labels diye gaye hain par destination/behavior spec nahi diya · menu items render kiye, destructive/navigation behavior invent nahi kiya
 part6 · sound persistence · persistence rule spec me nahi diya · console-local state use kiya
+
+part7 · /app/guide · Part 7 archive me full Guide spec nahi thi; ab Part 9 exact guide content supplied hai · Part 9 guide tabs/cards/search/iPhone text implemented
+part7/9 · C6 Awaaz Settings · exact C6 settings layout and persistence rules still missing · Part 9-defined browser TTS behavior implemented; per-token and profile toggles use browser storage
+part7 · skipped token · v7 excerpt me skipped copy/options hain, lekin v6 DB status constraint me `skipped` nahi aur owner console me skip, rejoin-last, ya skipped-token action nahi; owner_next sirf agla waiting token chalata hai · workflow implement nahi kiya; DB status, trigger condition, owner action, aur rejoin-last semantics chahiye
+part7 · ETA calculation · product excerpt previous 10 completed tokens ka average mangta hai, lekin supplied schema/owner RPCs completed duration ka average maintain nahi karte · existing `avg_time_min` (or 3-minute default) × active queue count se issue time par eta_at_issue save kiya; 10-token rolling average support ke liye owner/session duration updates ki exact rule chahiye
+part7 · realtime setup · schema/source me Supabase Realtime publication enable karne ka deployment setting nahi · client subscription plus 1.5-second RPC polling fallback; Supabase dashboard me `tokens` and `sessions` realtime enable karna zaroori
+part7 · issue-time ETA range/status mapping · supplied excerpt me output range/threshold calculation incomplete · stored `eta_at_issue` preserve kiya; exact before/around/after and range mapping follow-up spec ke bina invent nahi ki
+
+part8 · purge scheduler · target Supabase project/role may not allow pg_cron · migration attempts to enable pg_cron and schedule hourly purge; verify the `tokenapp-purge-expired` job in Supabase Cron. Recently Deleted view also purges expired records when opened.
+part8 · permanent delete/history · customer-history preservation · archived customer snapshots in `customer_history` before hard deletion; live Supabase migration has not been run here
+part8 · QR recovery “Settings badlein” destination · source had no settings editor spec; existing queue creation steps provide supported settings fields · implemented queue name/counter/limit/time/start editor reusing the supplied queue fields and validation components
+part9 · VAPID push · VAPID key values and HTTPS host not supplied · server worker and send route are implemented; configure `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT` before push can work
+part9 · account deletion · service-role secret not supplied · account deletion API uses `SUPABASE_SERVICE_ROLE_KEY`; it returns a setup error until configured
+part9 · iPhone guide screenshots · annotated screenshots are referenced but were not supplied · exact written steps are displayed without invented screenshots
+part9 · English language · only language selector labels are specified; no English UI copy supplied · Hinglish remains active and English selection is not saved
+part9 · support contact · WhatsApp/email addresses are blank in `lib/brand.ts` · contact row shows existing “Jaldi add hogi”; submitted feedback is stored in `feedback` table, no support inbox supplied
+part9 · screen help and coach marks · exact 2–3-line per-screen help copy and coach-mark copy/trigger content not supplied · existing Scan help and full Guide remain available; no new instructional copy invented
+part9 · push device verification · no configured Supabase/VAPID staging secrets or iPhone/Android devices in this workspace · build can be verified, real-device delivery matrix cannot
+part10 · visual/performance QA · requested device widths, 200% font scale, Lighthouse and low-end Android/iOS devices are unavailable here · TypeScript and production build checks only; device and Lighthouse measurements remain unverified
