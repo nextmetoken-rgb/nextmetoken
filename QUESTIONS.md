@@ -17,3 +17,16 @@ session expire · Dialog me sirf primary diya hai, Dialog component cancel bhi d
 db · users.plan · v7 me plan/subscription nahi banana · column nahi banaya
 db · queues.status, avg_time_mode values · spec me list nahi · text, koi check constraint nahi (Chip se live/paused/closed use hoga)
 db · customer ke liye queue/token insert · RPC Part 5+ me · abhi sirf owner policies + tokens apna select
+business · error state copy · spec me sirf "EmptyState" · "Queues nahi khul payin." + "Dobara koshish karein" button
+business · offline banner · minutes ka copy spec me nahi · Banner offline, last load se minutes
+business · tap on Closed card · sheet O3 Part 4 me nahi (console/history baad me) · tap par kuch nahi
+business · live/paused card tap · console page abhi nahi · /app/business/:id par bhejta hai (404 jab tak console na bane)
+new queue · save fail toast copy · spec me nahi · "Queue nahi ban payi. Dobara koshish karein."
+new queue · Advanced row · khulne par sirf start number field · start != 1 ho toh khula rehta hai
+new queue · limit vs start number · spec me relation nahi · koi cross-check nahi
+qr · library · asli QR ke liye zaroori · qrcode-generator (chhota, no dependency)
+qr · "Scan karke token lein" Hindi + English · exact Hindi text spec me nahi · "स्कैन करके टोकन लें" + "Scan to get a token" (sirf print sheet me)
+qr · QR link · domain spec me nahi · window.location.origin + /q/<code>
+qr · Toast "Queue ban gayi" · ?created=1 se dikhta hai, phir URL saaf
+nav · BottomNav sub-screens par · spec me nahi · sirf root tabs par dikhta hai (StickyBar se takrao na ho)
+v7 · trial/paywall/Locked chip · v7 me sab free · nahi banaya

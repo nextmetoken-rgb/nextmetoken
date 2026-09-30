@@ -22,10 +22,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, []);
 
+  const isRoot = TABS.some(tab => pathname === `/app/${tab}`);
+
   return (
     <div className="tab-body app-shell" data-testid="tabshell">
       {children}
-      <BottomNav activeTab={active} onTabChange={(tab) => router.push(`/app/${tab}`)} />
+      {isRoot && <BottomNav activeTab={active} onTabChange={(tab) => router.push(`/app/${tab}`)} />}
       <Dialog
         isOpen={expired} title={t('session.title')} body={t('session.body')} primaryLabel={t('session.cta')}
         onPrimary={() => router.push(`/login?next=${encodeURIComponent(pathname)}`)}

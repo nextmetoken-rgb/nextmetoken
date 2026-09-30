@@ -1,9 +1,9 @@
 # STATE.md
 
 ## Abhi kaunsa version
-- Version: v3
-- Parts done: 3
-- IN PROGRESS: -
+- Version: v4
+- Parts done: 4
+- IN PROGRESS: - (Part 4 poora. Sirf O3 sheet baaki, neeche dekhein)
 
 ## Stack
 Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontsource-variable (Inter, Noto Sans Devanagari).
@@ -53,13 +53,20 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
   - app/onboarding/name/page.tsx + components/auth/NameForm.tsx
   - app/app/layout.tsx (auth+naam guard) + components/shell/AppShell.tsx (BottomNav, session-expire Dialog)
   - app/app/{tokens,scan,profile,business}/page.tsx: khaali tab pages (AppBar title); profile me Logout (components/shell/LogoutButton.tsx)
+- Part 4 (owner queue + QR):
+  - app/app/business/page.tsx + components/business/BusinessList.tsx: Business tab (loading/empty/error/offline, Live>Paused>Closed, PURANI QUEUES)
+  - app/app/business/new/page.tsx + actions.ts (server action createQueueAction: validate, queue+pehla session insert) + components/business/{NewQueueFlow,StepName,StepLimit,StepTime}.tsx
+  - app/app/business/[id]/qr/page.tsx + components/business/{QrScreen,PrintSheet}.tsx: QR screen, Print/PDF (portal + @media print), Image save (PNG)
+  - lib/qr.ts (asli QR, qrcode-generator, level M, quiet zone 4), components/QRCodeSVG.tsx, components/QRFrame.tsx (ab asli QR)
+  - lib/queueInput.ts (validation), lib/queueView.ts (title, sort, summary)
+  - AppShell: BottomNav ab sirf 4 root tabs par (sub-screens par nahi)
 - lib/brand.ts: brand name, contact details
 - lib/i18n.ts: Hinglish strings & `t(key)`
 
 ## Environment variables (sirf NAAM)
 - NEXT_PUBLIC_SUPABASE_URL
 - NEXT_PUBLIC_SUPABASE_ANON_KEY
-(.env.example dekhein, .env.local banayein)
+(.env.example dekhein, .env.local banayein). Part 4 me koi naya env nahi.
 
 ## Kaise chalana hai
 - Supabase: project banayein, Auth > Providers > Google on, Auth > URL Configuration me Site URL + Redirect `http://localhost:3000/auth/callback` (deploy URL bhi), SQL Editor me supabase/001_init.sql chalayein
@@ -72,5 +79,11 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
 ## Decisions / QUESTIONS.md me pending
 - QUESTIONS.md dekhein
 
+## Baaki / dhyan dein
+- O3 "Purani queue" sheet (Dobara shuru etc.) nahi bana: closed queue abhi ban hi nahi sakti (console Part 5+). Closed card par tap abhi kuch nahi karta.
+- QR ka link `/q/<code>` hai, ye customer page Part 5+ me banega (abhi 404).
+- "Console kholein" aur live/paused card tap `/app/business/:id` par jate hain, wo page baad me (abhi 404).
+- "Demo: QR scan" button nahi banaya (sirf test build ke liye tha).
+
 ## Agla part
-- Part 4
+- Part 5

@@ -223,8 +223,9 @@ export const PersonRow: React.FC<PersonRowProps> = ({
 export interface QueueCardProps {
   queueName: string;
   status: "live" | "paused" | "closed";
-  servingNumber: number;
+  servingNumber: number | null;
   waitingCount: number;
+  subText?: string;
   closedReason?: string;
   onClick?: () => void;
   testId?: string;
@@ -235,6 +236,7 @@ export const QueueCard: React.FC<QueueCardProps> = ({
   status,
   servingNumber,
   waitingCount,
+  subText,
   closedReason,
   onClick,
   testId,
@@ -271,7 +273,7 @@ export const QueueCard: React.FC<QueueCardProps> = ({
         <Chip variant={status} />
       </div>
       <div className="t-body-sm" style={{ color: "var(--c-text-2)", marginTop: "8px" }}>
-        {`Chal raha: ${servingNumber} · ${waitingCount} intezar me`}
+        {subText ?? `Chal raha: ${servingNumber ?? '—'} · ${waitingCount} intezar me`}
       </div>
       {closedReason && (
         <div className="t-caption" style={{ color: "var(--c-text-3)", marginTop: "4px" }}>
