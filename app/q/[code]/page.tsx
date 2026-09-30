@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
 import QrEntry from '@/components/customer/QrEntry';
 import { CODE_RE, type PublicQueue } from '@/lib/publicQueue';
-import { createClient } from '@/lib/supabase/server';
+import type { PublicQueue } from '@/lib/publicQueue';
+const CODE_RE = /^[A-Za-z0-9_-]{10,64}$/;
 import { brand } from '@/lib/brand';
 import { QrOwnerNotice } from '@/components/customer/QrOwnerNotice';
 
