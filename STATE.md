@@ -1,9 +1,9 @@
 # STATE.md
 
 ## Abhi kaunsa version
-- Version: v4
-- Parts done: 4
-- IN PROGRESS: - (Part 4 poora. Sirf O3 sheet baaki, neeche dekhein)
+- Version: v5
+- Parts done: 5
+- IN PROGRESS: dependency install/build verification environment me complete nahi ho paya; `npm install` / `npm ci` timeout hue. Source-level Part 5 review/fixes complete kiye gaye hain; build ko normal networked Node environment me run karna baaki hai.
 
 ## Stack
 Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontsource-variable (Inter, Noto Sans Devanagari).
@@ -60,6 +60,13 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
   - lib/qr.ts (asli QR, qrcode-generator, level M, quiet zone 4), components/QRCodeSVG.tsx, components/QRFrame.tsx (ab asli QR)
   - lib/queueInput.ts (validation), lib/queueView.ts (title, sort, summary)
   - AppShell: BottomNav ab sirf 4 root tabs par (sub-screens par nahi)
+- Part 5 (customer scan + token):
+  - supabase/002_customer.sql: RPC `queue_public(code)` (anon ok), `my_active_token(code)`, `issue_token(code, name)` (atomic, queue row lock, duplicate nahi, limit/paused/closed/rate check). 001 ke baad SQL Editor me chalayein
+  - app/q/[code]/page.tsx: server render, logged-in + naam nahi -> onboarding, pehle se token -> /app/tokens/:id?t=existing
+  - components/customer/{QrEntry,LandingTicket,ConfirmSheet}.tsx: landing (C3), confirm sheet (C4); lib/publicQueue.ts: 5s polling + visibilitychange refetch + offline/reconnecting banner
+  - components/scan/ScanView.tsx + app/app/scan/page.tsx: Scan tab (C11), transparent on-dark AppBar, lib/decodeQr.ts (BarcodeDetector, warna jsqr). Naya package: jsqr
+  - lib/i18n.ts: naye strings + `tf(key, {vars})`
+  - Part 5 verification: QR landing/confirm/atomic RPC/scan paths reviewed; no new payment/subscription code added.
 - lib/brand.ts: brand name, contact details
 - lib/i18n.ts: Hinglish strings & `t(key)`
 
@@ -80,10 +87,15 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
 - QUESTIONS.md dekhein
 
 ## Baaki / dhyan dein
+- Token milne ke baad redirect `/app/tokens/:id?t=issued|changed|existing&n=` hota hai. Live Token page (Part 6) abhi nahi, toh 404 aayega; wahan `t` se toast dikhana hai (Token mil gaya / Aapka number {n} mila / pehle se hai).
+- C12 (notification pre-prompt) aur C13 (iPhone popup) token ke baad: Part 5 spec me nahi the, nahi banaye.
+- Realtime WebSocket nahi; 5s polling hi hai (spec ne fallback allowed kiya).
+- Hero number ka digit-wise chhota font (v7 §7.4) landing ticket me abhi nahi.
+- Scan tab ka "Madad ke tips" toggle sirf screen state hai, save nahi hota.
 - O3 "Purani queue" sheet (Dobara shuru etc.) nahi bana: closed queue abhi ban hi nahi sakti (console Part 5+). Closed card par tap abhi kuch nahi karta.
 - QR ka link `/q/<code>` hai, ye customer page Part 5+ me banega (abhi 404).
 - "Console kholein" aur live/paused card tap `/app/business/:id` par jate hain, wo page baad me (abhi 404).
 - "Demo: QR scan" button nahi banaya (sirf test build ke liye tha).
 
 ## Agla part
-- Part 5
+- Part 6

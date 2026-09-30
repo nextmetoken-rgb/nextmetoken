@@ -30,3 +30,14 @@ qr · QR link · domain spec me nahi · window.location.origin + /q/<code>
 qr · Toast "Queue ban gayi" · ?created=1 se dikhta hai, phir URL saaf
 nav · BottomNav sub-screens par · spec me nahi · sirf root tabs par dikhta hai (StickyBar se takrao na ho)
 v7 · trial/paywall/Locked chip · v7 me sab free · nahi banaya
+q landing · TicketCard variant="landing" · TicketCard me nahi tha · components/customer/LandingTicket.tsx alag banaya (accent rang, dashed line, notch nahi)
+q landing · logged-in user ka background · skeleton ticket · sheet ke peeche skeleton rakha (closed/limit par sheet nahi, seedha ticket)
+confirm · ETA formula · spec me nahi · (waiting+serving) x avg_time_min, -20% se +20%; avg_time_min khaali ho toh ETA row nahi
+confirm · token ke baad C12/C13 · Part 5 me nahi · nahi banaye
+confirm · paused par sheet · copy spec me nahi · sheet dikhti hai, CTA disabled, helper "Line ruki hai, thodi der baad dobara scan karein."
+confirm · rate limit · limit spec me nahi · 1 min me 10 token se zyada par "rate" error
+scan · AppBar transparent · AppBar me transparent variant nahi · default AppBar rakha
+scan · Madad tips toggle · kahan save ho spec me nahi · sirf local state
+scan · jsqr · BarcodeDetector sab browser me nahi (iPhone) · jsqr library joda (Part 5 ke liye zaroori)
+scan · not-ours · sirf apni origin ka /q/<code> maana jata hai
+spec bundle · referenced 01-foundations.md / 02-components.md / 03-screens-customer.md / 04-screens-owner-public.md and product spec v6 · full source files were not supplied in this upload; Part 5 file contains excerpts only · existing repo implementation was preserved and only supplied Part 5 requirements were used

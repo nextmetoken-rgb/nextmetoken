@@ -10,6 +10,7 @@ export interface ViewfinderOverlayProps {
   onGallerySelect?: () => void;
   isSuccess?: boolean;
   testId?: string;
+  label?: string;
 }
 
 export const ViewfinderOverlay: React.FC<ViewfinderOverlayProps> = ({
@@ -17,6 +18,7 @@ export const ViewfinderOverlay: React.FC<ViewfinderOverlayProps> = ({
   onGallerySelect,
   isSuccess = false,
   testId = "viewfinder-overlay",
+  label = "QR ko frame me lao",
 }) => {
   const bracketColor = isSuccess ? "var(--c-scan-ok)" : "#FFFFFF";
 
@@ -27,7 +29,7 @@ export const ViewfinderOverlay: React.FC<ViewfinderOverlayProps> = ({
         position: "fixed",
         inset: 0,
         backgroundColor: "rgba(0,0,0,.45)",
-        zIndex: "var(--z-sticky)",
+        zIndex: "calc(var(--z-sticky) - 1)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -47,7 +49,7 @@ export const ViewfinderOverlay: React.FC<ViewfinderOverlayProps> = ({
           fontWeight: 600,
         }}
       >
-        QR ko frame me lao
+        {label}
       </div>
 
       {/* Viewfinder Square Box */}

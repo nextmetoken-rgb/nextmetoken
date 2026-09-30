@@ -10,6 +10,8 @@ export interface AppBarProps {
   onBack?: () => void;
   rightActions?: React.ReactNode;
   scrolled?: boolean;
+  transparent?: boolean;
+  onDark?: boolean;
   testId?: string;
 }
 
@@ -19,6 +21,8 @@ export const AppBar: React.FC<AppBarProps> = ({
   onBack,
   rightActions,
   scrolled = false,
+  transparent = false,
+  onDark = false,
   testId,
 }) => {
   return (
@@ -28,8 +32,8 @@ export const AppBar: React.FC<AppBarProps> = ({
         position: "sticky",
         top: 0,
         zIndex: "var(--z-sticky)",
-        backgroundColor: "var(--c-bg)",
-        borderBottom: scrolled ? "1px solid var(--c-border)" : "1px solid transparent",
+        backgroundColor: transparent ? "transparent" : "var(--c-bg)",
+        borderBottom: transparent ? "1px solid transparent" : scrolled ? "1px solid var(--c-border)" : "1px solid transparent",
         paddingTop: "var(--safe-top)",
         transition: "border-color 120ms ease",
       }}
@@ -55,11 +59,11 @@ export const AppBar: React.FC<AppBarProps> = ({
             />
           )}
           {isRootTab ? (
-            <h2 className="t-h2" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <h2 className="t-h2" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: onDark ? "var(--c-on-accent)" : "var(--c-text)" }}>
               {title}
             </h2>
           ) : (
-            <h3 className="t-h3" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <h3 className="t-h3" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: onDark ? "var(--c-on-accent)" : "var(--c-text)" }}>
               {title}
             </h3>
           )}
