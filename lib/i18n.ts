@@ -111,6 +111,7 @@ const hi = {
   'scan.notOurs': 'Ye QR is app ka nahi hai.',
   'scan.sheet.tips': 'Madad ke tips', 'scan.sheet.guide': 'Guide (Madad)',
   'scan.torch': 'Torch', 'scan.frame': 'QR ko frame me lao',
+  'console.current': 'ABHI CHAL RAHA HAI', 'console.walkin': 'Walk-in add karein',
 } as const;
 export type Key = keyof typeof hi;
 export const t = (k: Key): string => hi[k];

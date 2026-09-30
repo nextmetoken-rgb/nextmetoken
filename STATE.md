@@ -1,9 +1,9 @@
 # STATE.md
 
 ## Abhi kaunsa version
-- Version: v5
-- Parts done: 5
-- IN PROGRESS: dependency install/build verification environment me complete nahi ho paya; `npm install` / `npm ci` timeout hue. Source-level Part 5 review/fixes complete kiye gaye hain; build ko normal networked Node environment me run karna baaki hai.
+- Version: v6
+- Parts done: 6
+- IN PROGRESS: dependency install/build verification environment me complete nahi ho paya; `npm install` timeout hua. Source-level Part 6 implementation + static review complete kiya gaya hai; production build ko normal networked Node environment me run karna baaki hai.
 
 ## Stack
 Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontsource-variable (Inter, Noto Sans Devanagari).
@@ -67,6 +67,8 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
   - components/scan/ScanView.tsx + app/app/scan/page.tsx: Scan tab (C11), transparent on-dark AppBar, lib/decodeQr.ts (BarcodeDetector, warna jsqr). Naya package: jsqr
   - lib/i18n.ts: naye strings + `tf(key, {vars})`
   - Part 5 verification: QR landing/confirm/atomic RPC/scan paths reviewed; no new payment/subscription code added.
+- Part 6 (owner console): `app/app/business/[id]/page.tsx` + `components/business/OwnerConsole.tsx`: owner console, current token hero, fixed-height line list, 3rd-row focus, Agla/Pichla, 300ms lock, optimistic-safe server actions, walk-in sheet, Hatao confirm + 5s Undo, pause/end-day/restart menu actions, offline/realtime/polling refresh, wake lock, sound/TTS.
+- Part 6 DB: `supabase/003_owner_console.sql`: atomic `owner_next`, `owner_prev`, `owner_undo`, `owner_walkin`, `owner_remove`, `owner_set_status`, `owner_end_day`, `owner_restart` RPCs.
 - lib/brand.ts: brand name, contact details
 - lib/i18n.ts: Hinglish strings & `t(key)`
 
@@ -87,7 +89,7 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
 - QUESTIONS.md dekhein
 
 ## Baaki / dhyan dein
-- Token milne ke baad redirect `/app/tokens/:id?t=issued|changed|existing&n=` hota hai. Live Token page (Part 6) abhi nahi, toh 404 aayega; wahan `t` se toast dikhana hai (Token mil gaya / Aapka number {n} mila / pehle se hai).
+- Token milne ke baad redirect `/app/tokens/:id?t=issued|changed|existing&n=` hota hai. Live Token page abhi bhi next part ka kaam hai.
 - C12 (notification pre-prompt) aur C13 (iPhone popup) token ke baad: Part 5 spec me nahi the, nahi banaye.
 - Realtime WebSocket nahi; 5s polling hi hai (spec ne fallback allowed kiya).
 - Hero number ka digit-wise chhota font (v7 §7.4) landing ticket me abhi nahi.
@@ -98,4 +100,4 @@ Next.js 14 (App Router) + TypeScript, plain CSS variables, lucide-react, @fontso
 - "Demo: QR scan" button nahi banaya (sirf test build ke liye tha).
 
 ## Agla part
-- Part 6
+- Part 7

@@ -41,3 +41,7 @@ scan · Madad tips toggle · kahan save ho spec me nahi · sirf local state
 scan · jsqr · BarcodeDetector sab browser me nahi (iPhone) · jsqr library joda (Part 5 ke liye zaroori)
 scan · not-ours · sirf apni origin ka /q/<code> maana jata hai
 spec bundle · referenced 01-foundations.md / 02-components.md / 03-screens-customer.md / 04-screens-owner-public.md and product spec v6 · full source files were not supplied in this upload; Part 5 file contains excerpts only · existing repo implementation was preserved and only supplied Part 5 requirements were used
+
+part6 · owner console realtime · Supabase Realtime publication/config source spec me exact setup nahi diya · client subscription + 5s polling fallback use kiya
+part6 · History/Settings/Delete menu destinations/behavior · Part 6 me labels diye gaye hain par destination/behavior spec nahi diya · menu items render kiye, destructive/navigation behavior invent nahi kiya
+part6 · sound persistence · persistence rule spec me nahi diya · console-local state use kiya
