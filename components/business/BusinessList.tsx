@@ -28,6 +28,7 @@ export default function BusinessList() {
   }, []);
 
   useEffect(() => { if (online) void load(); }, [online, load]);
+  useEffect(()=>{const refresh=()=>void load();window.addEventListener('queues-changed',refresh);return()=>window.removeEventListener('queues-changed',refresh)},[load]);
 
   const banner = !online ? <Banner variant="offline" minutesAgo={state.kind === 'ok' ? Math.floor((Date.now() - state.at) / 60000) : 0} testId="biz.offline" /> : null;
 

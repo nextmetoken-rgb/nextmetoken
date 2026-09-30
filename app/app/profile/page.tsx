@@ -1,12 +1,3 @@
-import { AppBar } from '@/components/AppBar';
-import LogoutButton from '@/components/shell/LogoutButton';
-import { t } from '@/lib/i18n';
-
-export default function ProfileTab() {
-  return (
-    <>
-      <AppBar title={t('tab.profile')} isRootTab testId="profile.appbar" />
-      <main className="container page tight" data-testid="profile"><LogoutButton /></main>
-    </>
-  );
-}
+import {redirect} from 'next/navigation';import {createClient} from '@/lib/supabase/server';import ProfileView from '@/components/profile/ProfileView';import {t} from '@/lib/i18n';
+export const dynamic='force-dynamic';
+export default async function ProfileTab(){const db=createClient();const {data:{user}}=await db.auth.getUser();if(!user)redirect('/login');const {data}=await db.from('users').select('name,helper_tips_enabled,language').eq('id',user.id).maybeSingle();return <ProfileView userId={user.id} name={data?.name||''} email={user.email||''} tips={data?.helper_tips_enabled??true} language={data?.language||'hi'}/>}

@@ -12,6 +12,7 @@ import { Toast } from '@/components/Toast';
 import { ViewfinderOverlay } from '@/components/ViewfinderOverlay';
 import { codeFromQr, decodeQr } from '@/lib/decodeQr';
 import { t } from '@/lib/i18n';
+import { createClient } from '@/lib/supabase/client';
 
 type Cam = 'prompt' | 'denied' | 'unsupported' | 'scanning' | 'success';
 const DEBOUNCE_MS = 1500;
@@ -29,6 +30,8 @@ export default function ScanView() {
   const [help, setHelp] = useState(false);
   const [tips, setTips] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
+  useEffect(()=>{void createClient().from('users').select('helper_tips_enabled').maybeSingle().then(({data})=>{if(data)setTips(data.helper_tips_enabled)})},[]);
+  const saveTips=(value:boolean)=>{setTips(value);void createClient().from('users').update({helper_tips_enabled:value}).then(({error})=>{if(error)setToast('Setting save nahi ho payi. Dobara koshish karein.')})};
 
   const stop = useCallback(() => { streamRef.current?.getTracks().forEach(tr => tr.stop()); streamRef.current = null; }, []);
 
@@ -115,7 +118,7 @@ export default function ScanView() {
         </main>
       )}
       <BottomSheet isOpen={help} onClose={() => setHelp(false)} title={t('scan.help')} dismissible testId="scan.helpsheet">
-        <ToggleRow label={t('scan.sheet.tips')} checked={tips} onChange={setTips} testId="scan.tips" />
+        <ToggleRow label={t('scan.sheet.tips')} checked={tips} onChange={saveTips} testId="scan.tips" />
         <ListRow onClick={() => router.push('/app/guide')} testId="scan.guide">{t('scan.sheet.guide')}</ListRow>
       </BottomSheet>
       {toast && <Toast type="info" message={toast} onDismiss={() => setToast(null)} testId="scan.toast" />}

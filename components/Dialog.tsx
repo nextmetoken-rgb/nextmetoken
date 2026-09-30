@@ -12,6 +12,7 @@ export interface DialogProps {
   onPrimary: () => void;
   cancelLabel?: string;
   onCancel: () => void;
+  primaryDisabled?: boolean;
   testId?: string;
 }
 
@@ -24,6 +25,7 @@ export const Dialog: React.FC<DialogProps> = ({
   onPrimary,
   cancelLabel = "Nahi",
   onCancel,
+  primaryDisabled = false,
   testId = "dialog",
 }) => {
   const [mounted, setMounted] = React.useState(isOpen);
@@ -111,6 +113,7 @@ export const Dialog: React.FC<DialogProps> = ({
             size="md"
             fullWidth
             onClick={onPrimary}
+            disabled={primaryDisabled}
             testId={`${testId}.primary`}
           >
             {primaryLabel}
