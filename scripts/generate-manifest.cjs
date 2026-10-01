@@ -1,0 +1,16 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const root = path.join(__dirname, '..');
+const source = fs.readFileSync(path.join(root, 'lib', 'brand.ts'), 'utf8');
+const name = source.match(/name:\s*'([^']+)'/)?.[1];
+if (!name) throw new Error('lib/brand.ts me brand.name set nahi hai.');
+const css = fs.readFileSync(path.join(root, 'app', 'globals.css'), 'utf8');
+const background = css.match(/--c-bg:([^;]+)/)?.[1]?.trim();
+if (!background) throw new Error('app/globals.css me --c-bg token nahi hai.');
+const manifest = { name, short_name: name, display: 'standalone', orientation: 'portrait', background_color: background, theme_color: background, start_url: '/app/scan?source=pwa', icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }, { src: '/icons/icon-512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }] };
+fs.writeFileSync(path.join(root, 'public', 'manifest.json'), `${JSON.stringify(manifest)}\n`);
+const workerPath = path.join(root, 'public', 'sw.js');
+let worker = fs.readFileSync(workerPath, 'utf8');
+worker = worker.replace(/const CACHE_NAME = '[^']+';/, "const CACHE_NAME = 'tokenapp-v12';");
+worker = worker.replace(/title: '[^']+'/, `title: '${name.replaceAll("'", "\\'")}'`);
+fs.writeFileSync(workerPath, worker);
