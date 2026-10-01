@@ -1,0 +1,5 @@
+import {NextResponse} from 'next/server';
+import {createClient as createAdminClient} from '@supabase/supabase-js';
+import {createClient} from '@/lib/supabase/server';
+export const dynamic='force-dynamic';
+export async function POST(request:Request){const db=createClient();const {data:{user}}=await db.auth.getUser();if(!user)return NextResponse.json({error:'auth'},{status:401});const serviceKey=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!serviceKey)return NextResponse.json({error:'missing_key'},{status:503});let body:{confirmationName?:string};try{body=await request.json()}catch{return NextResponse.json({error:'invalid'},{status:400})}const {data:profile}=await db.from('users').select('name').eq('id',user.id).maybeSingle();if(!profile?.name||body.confirmationName?.trim()!==profile.name.trim())return NextResponse.json({error:'name_mismatch'},{status:400});const admin=createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,serviceKey,{auth:{autoRefreshToken:false,persistSession:false}});const {error}=await admin.auth.admin.deleteUser(user.id);if(error)return NextResponse.json({error:'delete_failed'},{status:500});return NextResponse.json({ok:true})}
