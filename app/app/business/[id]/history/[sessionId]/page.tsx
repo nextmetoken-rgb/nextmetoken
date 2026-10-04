@@ -1,3 +1,0 @@
-import {notFound,redirect} from 'next/navigation';import {createClient} from '@/lib/supabase/server';import {OwnerHistoryDetail} from '@/components/business/OwnerHistory';
-export const dynamic='force-dynamic';
-export default async function HistoryDetailPage({params}:{params:{id:string;sessionId:string}}){const db=createClient();const {data:{user}}=await db.auth.getUser();if(!user)redirect('/login');const {data}=await db.rpc('owner_history_detail',{p_session_id:params.sessionId});if(!data||data.result!=='ok')notFound();return <OwnerHistoryDetail sessionId={params.sessionId} queueId={params.id}/>}
