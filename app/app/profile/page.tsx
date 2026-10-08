@@ -1,3 +1,0 @@
-import {redirect} from 'next/navigation';import {cookies} from 'next/headers';import {createClient} from '@/lib/supabase/server';import ProfileView from '@/components/profile/ProfileView';
-export const dynamic='force-dynamic';
-export default async function ProfileTab(){const db=createClient();const {data:{user}}=await db.auth.getUser();if(!user)redirect('/login');const {data}=await db.from('users').select('name,language').eq('id',user.id).maybeSingle();const theme=cookies().get('tokenapp-theme')?.value==='dark'?'dark':'light';return <ProfileView userId={user.id} name={data?.name||''} email={user.email||''} language={data?.language||'hi'} theme={theme}/>}
