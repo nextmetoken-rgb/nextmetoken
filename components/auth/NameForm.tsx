@@ -1,10 +1,9 @@
 'use client';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { TextField } from '@/components/TextField';
 import { StickyBar } from '@/components/StickyBar';
-import { Toast } from '@/components/Toast';
 import { createClient } from '@/lib/supabase/client';
 import { isValidName, NAME_MAX } from '@/lib/validateName';
 import { t } from '@/lib/i18n';
@@ -15,7 +14,6 @@ export default function NameForm({ defaultName, next }: { defaultName: string; n
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
-  const dismiss = useCallback(() => setSaveFailed(false), []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +48,7 @@ export default function NameForm({ defaultName, next }: { defaultName: string; n
       <StickyBar testId="name.cta.bar">
         <Button type="submit" size="md" fullWidth loading={loading} testId="name.cta">{t('name.cta')}</Button>
       </StickyBar>
-      {saveFailed && <Toast type="error" message={t('name.saveError')} hasBottomNav={false} onDismiss={dismiss} />}
+      {saveFailed&&<p role="alert" className="t-body-sm" style={{padding:"var(--sp-4)"}}>{t('name.saveError')}</p>}
     </form>
   );
 }

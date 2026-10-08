@@ -16,12 +16,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const active = TABS.find(tab => pathname === `/app/${tab}` || pathname.startsWith(`/app/${tab}/`)) ?? 'scan';
 
   useEffect(() => {
+    TABS.forEach(tab => router.prefetch(`/app/${tab}`));
     if ('serviceWorker' in navigator) void navigator.serviceWorker.register('/sw.js').catch(() => undefined);
     const { data } = createClient().auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT' && !isManualLogout()) setExpired(true);
     });
     return () => data.subscription.unsubscribe();
-  }, []);
+  }, [router]);
 
   const isRoot = TABS.some(tab => pathname === `/app/${tab}`);
 

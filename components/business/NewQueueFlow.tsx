@@ -7,7 +7,6 @@ import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { StepDots } from '@/components/StepDots';
 import { StickyBar } from '@/components/StickyBar';
-import { Toast } from '@/components/Toast';
 import { TextField } from '@/components/TextField';
 import { createQueueAction } from '@/app/app/business/new/actions';
 import { EMPTY_QUEUE_INPUT, nameOk, validateStep, type QueueErrors, type QueueInput } from '@/lib/queueInput';
@@ -30,7 +29,7 @@ export default function NewQueueFlow() {
   useEffect(()=>{if(!manualBook)setBookId(suggestBookId(v.name))},[v.name,manualBook]);
   useEffect(()=>{if(step!==2||!online)return;const value=bookId.trim().toLowerCase();if(!/^[a-z0-9][a-z0-9-]{2,29}$/.test(value)){setBookState('invalid');return}setBookState('checking');const timer=window.setTimeout(async()=>{const {data,error}=await createClient().rpc('book_id_available',{p_book_id:value,p_queue_id:null});setBookState(error?'idle':data?'available':'taken')},250);return()=>window.clearTimeout(timer)},[bookId,step,online]);
   const back=()=>step>1?setStep((step-1) as 1|2|3|4):router.push('/app/business');
-  const submit=async()=>{setLoading(true);const res=await createQueueAction(v,bookId).catch(()=>({error:'save' as const}));if('id'in res){router.push(`/app/business/${res.id}/qr?created=1`);return}setLoading(false);if(res.error==='book_taken'){setStep(2);setBookState('taken');return}setFailedMessage(res.error==='exists'?'Aapke account me business pehle se hai. Business tab kholein.':res.error==='save'?'Business save nahi hua. Agar Business tab me bhi queue nahi khul rahi, corrected Supabase migration 009 run karke refresh karein.':'Business details check karein.');setFailed(true)};
+  const submit=async()=>{setFailed(false);setLoading(true);const res=await createQueueAction(v,bookId).catch(()=>({error:'save' as const}));if('id'in res){router.push(`/app/business/${res.id}/qr?created=1`);return}setLoading(false);if(res.error==='book_taken'){setStep(2);setBookState('taken');return}setFailedMessage(res.error==='exists'?'Aapke account me business pehle se hai. Business tab kholein.':res.error==='save'?'Business save nahi hua. Agar Business tab me bhi queue nahi khul rahi, corrected Supabase migration 009 run karke refresh karein.':'Business details check karein.');setFailed(true)};
   const next=()=>{if(step===1){const e=validateStep(1,v);setErrors(e);if(Object.values(e).some(Boolean))return}
     if(step===2&&bookState!=='available')return;
     if(step===3){const e=validateStep(2,v);setErrors(e);if(Object.values(e).some(Boolean))return}
@@ -46,6 +45,6 @@ export default function NewQueueFlow() {
       <div className="sticky-space"/>
     </main>
     <StickyBar testId="new.cta"><Button fullWidth loading={loading} disabled={!online||(step===1&&!nameOk(v.name))||(step===2&&bookState!=='available')} onClick={next}>{step===4?t('new.create'):'Aage badhein'}</Button></StickyBar>
-    {failed&&<Toast type="error" message={failedMessage||t('new.saveError')} hasBottomNav={false} onDismiss={()=>setFailed(false)}/>}
+    {failed&&<p role="alert" className="t-body-sm" style={{marginTop:"var(--sp-3)"}}>{failedMessage||t('new.saveError')}</p>}
   </>;
 }

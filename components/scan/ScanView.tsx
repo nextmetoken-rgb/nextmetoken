@@ -3,21 +3,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { HelpCircle, ScanLine } from 'lucide-react';
 import { AppBar } from '@/components/AppBar';
-import { CoachTip } from '@/components/CoachTip';
 import { IconButton } from '@/components/IconButton';
 import Button from '@/components/Button';
 import { Card, ListRow } from '@/components/Cards';
 import { BottomSheet } from '@/components/BottomSheet';
-import { ToggleRow } from '@/components/Toggle';
-import { Toast } from '@/components/Toast';
 import { ViewfinderOverlay } from '@/components/ViewfinderOverlay';
 import { codeFromQr, decodeQr } from '@/lib/decodeQr';
 import { t } from '@/lib/i18n';
-import { createClient } from '@/lib/supabase/client';
-import { savePopupPreference } from '@/lib/popupPreference';
 
 type Cam = 'prompt' | 'denied' | 'unsupported' | 'scanning' | 'success';
-const DEBOUNCE_MS = 1500;
 const FREEZE_MS = 200;
 
 export default function ScanView() {
@@ -25,15 +19,10 @@ export default function ScanView() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const lastNotOurs = useRef(0);
   const done = useRef(false);
   const [cam, setCam] = useState<Cam>('prompt');
   const [torch, setTorch] = useState(false);
   const [help, setHelp] = useState(false);
-  const [tips, setTips] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
-  useEffect(()=>{void createClient().from('users').select('helper_tips_enabled').maybeSingle().then(({data})=>{const enabled=data?.helper_tips_enabled??false;setTips(enabled);savePopupPreference(enabled)})},[]);
-  const saveTips=(value:boolean)=>{setTips(value);savePopupPreference(value);void createClient().from('users').update({helper_tips_enabled:value}).then(({error})=>{if(error)setToast('Setting save nahi ho payi. Dobara koshish karein.')})};
 
   const stop = useCallback(() => { streamRef.current?.getTracks().forEach(tr => tr.stop()); streamRef.current = null; }, []);
 
@@ -41,7 +30,6 @@ export default function ScanView() {
     if (done.current) return;
     const code = codeFromQr(text);
     if (!code) {
-      if (Date.now() - lastNotOurs.current > DEBOUNCE_MS) { lastNotOurs.current = Date.now(); setToast(t('scan.notOurs')); }
       return;
     }
     done.current = true; setCam('success');
@@ -101,7 +89,6 @@ export default function ScanView() {
     <>
       <AppBar title={t('scan.title')} isRootTab transparent onDark testId="scan.appbar"
         rightActions={<IconButton icon={<HelpCircle size={24} />} variant="on-dark" aria-label={t('scan.help')} onClick={() => setHelp(true)} testId="scan.help" />} />
-      <CoachTip id="scan" message="QR scan karke line me apna token lein." />
       <video ref={videoRef} playsInline muted style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', objectFit: 'cover', background: '#000', zIndex: 0 }} data-testid="scan.video" />
       <input ref={fileRef} type="file" accept="image/*" hidden onChange={onFile} data-testid="scan.file" />
       {(cam === 'scanning' || cam === 'success') && (
@@ -121,10 +108,8 @@ export default function ScanView() {
         </main>
       )}
       <BottomSheet isOpen={help} onClose={() => setHelp(false)} title={t('scan.help')} dismissible testId="scan.helpsheet">
-        <ToggleRow label={t('scan.sheet.tips')} checked={tips} onChange={saveTips} testId="scan.tips" />
-        <ListRow onClick={() => router.push('/app/guide')} testId="scan.guide">{t('scan.sheet.guide')}</ListRow>
+                <ListRow onClick={() => router.push('/app/guide')} testId="scan.guide">{t('scan.sheet.guide')}</ListRow>
       </BottomSheet>
-      {toast && <Toast type="info" message={toast} onDismiss={() => setToast(null)} testId="scan.toast" />}
     </>
   );
 }

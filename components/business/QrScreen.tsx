@@ -6,7 +6,6 @@ import { AppBar } from '@/components/AppBar';
 import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { QRFrame } from '@/components/QRFrame';
-import { Toast } from '@/components/Toast';
 import { downloadQrPng } from '@/lib/qr';
 import { t } from '@/lib/i18n';
 import { useOnline } from '@/lib/useOnline';
@@ -20,7 +19,7 @@ export default function QrScreen({ id, code, title, created }: Props) {
   const [link, setLink] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
   const [printSelection, setPrintSelection] = useState<string[]>([]);
-  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(created ? { msg: t('qr.created'), type: 'success' } : null);
+  const [statusMessage, setStatusMessage] = useState<{ msg: string; type: 'success' | 'error' } | null>(created ? { msg: t('qr.created'), type: 'success' } : null);
 
   useEffect(() => {
     setLink(`${window.location.origin}/q/${code}`);
@@ -28,7 +27,7 @@ export default function QrScreen({ id, code, title, created }: Props) {
   }, [code, created, id]);
 
   const save = async () => {
-    try { for(const option of selected) await downloadQrPng(link, `qr-${code}-${option}.png`, { businessName: title, withInfo:option==='info' }); } catch { setToast({ msg: t('qr.saveError'), type: 'error' }); }
+    try { for(const option of selected) await downloadQrPng(link, `qr-${code}-${option}.png`, { businessName: title, withInfo:option==='info' }); } catch { setStatusMessage({ msg: t('qr.saveError'), type: 'error' }); }
   };
 
   return (
@@ -46,7 +45,7 @@ export default function QrScreen({ id, code, title, created }: Props) {
         </div>
       </main>
       {link && <PrintSheet title={title} value={link} variants={printSelection} />}
-      {toast && <Toast type={toast.type} message={toast.msg} hasBottomNav onDismiss={() => setToast(null)} />}
+      {statusMessage&&<p role={statusMessage.type==='error'?'alert':'status'} className="t-body-sm" aria-live="polite">{statusMessage.msg}</p>}
     </>
   );
 }
