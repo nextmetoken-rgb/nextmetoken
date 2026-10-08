@@ -12,14 +12,26 @@ alter table public.queues
   add column if not exists announcement_repeat_count integer not null default 1,
   add column if not exists sound_box_enabled boolean not null default false;
 
-update public.queues set book_id=lower(regexp_replace(name,'[^a-zA-Z0-9]+','-','g'))||'-'||substr(replace(id::text,'-',''),1,6) where book_id is null;
+-- Repair missing, malformed, or duplicate IDs before adding the constraints.
+-- Long or non-Latin names are reduced to a safe ASCII slug; the ID suffix keeps it unique.
+update public.queues q
+set book_id = coalesce(
+  nullif(left(trim(both '-' from lower(regexp_replace(q.name,'[^a-zA-Z0-9]+','-','g'))),19),''),
+  'business'
+) || '-' || substr(replace(q.id::text,'-',''),1,10)
+where q.book_id is null
+   or q.book_id !~ '^[a-z0-9][a-z0-9-]{2,29}$'
+   or exists (select 1 from public.queues dupe where dupe.book_id=q.book_id and dupe.id<q.id);
 update public.queues set trial_ends_at=(((created_at at time zone 'Asia/Kolkata')::date + 5)::timestamp at time zone 'Asia/Kolkata') where trial_ends_at is null;
 update public.queues set balance_last_charged_on=(trial_ends_at at time zone 'Asia/Kolkata')::date - 1 where balance_last_charged_on is null;
 alter table public.queues alter column book_id set not null;
 alter table public.queues alter column trial_ends_at set not null;
 alter table public.queues alter column balance_last_charged_on set not null;
+alter table public.queues drop constraint if exists queues_book_id_format;
 alter table public.queues add constraint queues_book_id_format check (book_id ~ '^[a-z0-9][a-z0-9-]{2,29}$');
+alter table public.queues drop constraint if exists queues_days_nonnegative;
 alter table public.queues add constraint queues_days_nonnegative check (paid_days >= 0 and test_days >= 0);
+alter table public.queues drop constraint if exists queues_announcement_repeat;
 alter table public.queues add constraint queues_announcement_repeat check (announcement_repeat_count between 1 and 4);
 create unique index if not exists queues_book_id_unique on public.queues(book_id);
 
@@ -55,6 +67,7 @@ create policy payment_orders_owner_read on public.payment_orders for select to a
 
 -- Prevent direct client inserts/deletes and prevent an owner from editing the balance, Book ID or lifecycle fields directly.
 drop policy if exists queues_owner on public.queues;
+drop policy if exists queues_owner_read on public.queues;
 create policy queues_owner_read on public.queues for select to authenticated using(owner_id=auth.uid());
 drop function if exists public.owner_delete_queue(uuid,boolean);
 
@@ -72,7 +85,7 @@ begin
   perform 1 from public.users where id=uid for update;
   if char_length(clean_name)<2 or char_length(clean_name)>40 or clean_book !~ '^[a-z0-9][a-z0-9-]{2,29}$' then return jsonb_build_object('result','invalid'); end if;
   if p_start not between 1 and 9999 or (p_token_limit is not null and p_token_limit not between 1 and 9999) or p_avg_mode not in ('auto','manual') or (p_avg_mode='manual' and p_avg_minutes not between 1 and 120) then return jsonb_build_object('result','invalid'); end if;
-  if exists(select 1 from public.queues where owner_id=uid) then return jsonb_build_object('result','exists'); end if;
+  if exists(select 1 from public.queues where owner_id=uid and deleted_at is null) then return jsonb_build_object('result','exists'); end if;
   if exists(select 1 from public.queues where book_id=clean_book) then return jsonb_build_object('result','book_taken'); end if;
   update public.bootstrap_credit set available=false where id=true and available returning 10 into credit;
   insert into public.queues(owner_id,code,name,book_id,next_number,start_number,token_limit,avg_time_mode,avg_time_min,status,trial_ends_at,paid_days,test_days,balance_last_charged_on)

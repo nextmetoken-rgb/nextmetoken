@@ -8,7 +8,6 @@ import { GuideAccordions } from '@/components/home/GuideAccordions';
 import { t, type Key } from '@/lib/i18n';
 import { brand } from '@/lib/brand';
 import { InstallButton } from '@/components/InstallButton';
-import { BookLookup } from '@/components/home/BookLookup';
 
 const faq = [5, 1, 2, 3, 4] as const;
 const who = [[Store, 'Salon'], [Stethoscope, 'Clinic'], [Wrench, 'Repair shop'], [Sparkles, 'Aur kai jagah']] as const;
@@ -36,7 +35,6 @@ export default function Home() {
           <GuideAccordions />
         </section>
 
-        <BookLookup />
 
         <section className="stack-4" data-testid="home.who">
           <h2 className="t-h2">{t('who.title')}</h2>

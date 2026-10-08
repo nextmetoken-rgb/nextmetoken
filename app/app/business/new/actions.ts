@@ -2,7 +2,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { toInt, validateAll, type QueueInput } from '@/lib/queueInput';
 
-export type CreateResult = { id: string } | { error: 'invalid' | 'auth' | 'save' };
+export type CreateResult = { id: string } | { error: 'invalid' | 'auth' | 'save' | 'exists' | 'book_taken' };
 export async function createQueueAction(input: QueueInput, bookId: string): Promise<CreateResult> {
   if (Object.keys(validateAll(input)).length > 0) return { error: 'invalid' };
   const supabase = createClient();
@@ -17,5 +17,7 @@ export async function createQueueAction(input: QueueInput, bookId: string): Prom
   if (error || !data) return { error: 'save' };
   if (data.result === 'ok' && data.queue_id) return { id: data.queue_id };
   if (data.result === 'invalid') return { error: 'invalid' };
+  if (data.result === 'exists') return { error: 'exists' };
+  if (data.result === 'book_taken') return { error: 'book_taken' };
   return { error: 'save' };
 }
