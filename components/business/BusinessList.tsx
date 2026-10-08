@@ -5,7 +5,6 @@ import { BottomSheet } from '@/components/BottomSheet';
 import { AlertTriangle, Plus, Store, Coins } from 'lucide-react';
 import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
-import { CoachTip } from '@/components/CoachTip';
 import { QueueCard } from '@/components/Cards';
 import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/Skeleton';
@@ -14,7 +13,7 @@ import { queueTitle, sortQueues, type QueueRow } from '@/lib/queueView';
 import { t } from '@/lib/i18n';
 import { useOnline } from '@/lib/useOnline';
 
-type Load = { kind: 'loading' } | { kind: 'error' } | { kind: 'ok'; rows: QueueRow[]; at: number };
+type Load = { kind: 'loading' } | { kind: 'error'; issue:'connection'|'migration' } | { kind: 'ok'; rows: QueueRow[]; at: number };
 
 export default function BusinessList() {
   const router = useRouter();
@@ -26,9 +25,10 @@ export default function BusinessList() {
   const load = useCallback(async () => {
     const { data, error } = await createClient()
       .from('queues')
-      .select('id,name,counter_name,book_id,paid_days,test_days,trial_ends_at,status,start_number,created_at,sessions(id,started_at,ended_at,current_number,tokens(status))')
+      .select('id,name,counter_name,book_id,paid_days,test_days,trial_ends_at,status,start_number,created_at,sessions(id,started_at,ended_at,current_number,tokens(status))').order('started_at',{ascending:false,foreignTable:'sessions'}).limit(1,{foreignTable:'sessions'})
       .is('deleted_at', null);
-    setState(prev => (error || !data ? (prev.kind === 'ok' ? prev : { kind: 'error' }) : { kind: 'ok', rows: data as unknown as QueueRow[], at: Date.now() }));
+    const migrationIssue=Boolean(error&&(/column .* does not exist|schema cache|book_id|paid_days|test_days|trial_ends_at/i.test(error.message)||error.code==='42703'||error.code==='PGRST204'));
+    setState(prev => (error || !data ? (prev.kind === 'ok' ? prev : { kind: 'error',issue:migrationIssue?'migration':'connection' }) : { kind: 'ok', rows: data as unknown as QueueRow[], at: Date.now() }));
   }, []);
 
   useEffect(() => { if (online) void load(); }, [online, load]);
@@ -56,7 +56,7 @@ export default function BusinessList() {
     return (
       <>{banner}
         <main className="container page tight">
-          <EmptyState icon={<AlertTriangle />} title={t('biz.error.title')} body={t('biz.error.body')} actionLabel={t('biz.error.cta')} onAction={() => { setState({ kind: 'loading' }); void load(); }} testId="biz.error" />
+          <EmptyState icon={<AlertTriangle />} title={t('biz.error.title')} body={state.kind==='error'&&state.issue==='migration'?'Supabase database update poora nahi hua. SQL Editor me corrected migration 009 poori run karein, phir page refresh karein.':t('biz.error.body')} actionLabel={t('biz.error.cta')} onAction={() => { setState({ kind: 'loading' }); void load(); }} testId="biz.error" />
         </main>
       </>
     );
@@ -79,13 +79,12 @@ export default function BusinessList() {
   return (
     <>{banner}
     <main className="container page tight" data-testid="business">
-      {items.length>0 && <CoachTip id="business" message="Yahan apni queue banayein aur manage karein."/>}
-        {items[0] && <button type="button" className="business-days-card" onClick={()=>router.push('/app/business/funds')}><span className="business-days-coin"><Coins size={21}/></span><span className="business-days-text"><b>{(items[0].q.paid_days||0)+(items[0].q.test_days||0)} din</b><small>Balance · ₹1 = 1 din</small></span><Plus size={19}/></button>}
+        {items[0] && <button type="button" className="business-days-card" onClick={()=>router.push('/app/business/funds')}><span className="business-days-coin"><Coins size={21}/></span><span className="business-days-text"><b>{(items[0].q.paid_days||0)+(items[0].q.test_days||0)+Math.max(0,Math.ceil((Date.parse(items[0].q.trial_ends_at)-Date.now())/86400000))} din</b><small>Bache hue trial + balance · ₹1 = 1 din</small></span><Plus size={19}/></button>}
         {active.length > 0 && (
           <div className="biz-list" data-testid="biz.list">
             {active.map(({ q, s }) => (
               <QueueCard key={q.id} queueName={queueTitle(q)} status={s.status} servingNumber={s.serving} waitingCount={s.waiting}
-                onClick={() => router.push(`/app/business/${q.id}`)} testId={`biz.card.${q.id}`} />
+                onClick={() => router.push(`/app/business/${q.id}`)} onPrefetch={() => router.prefetch(`/app/business/${q.id}`)} testId={`biz.card.${q.id}`} />
             ))}
           </div>
         )}

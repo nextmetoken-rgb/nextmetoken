@@ -4,7 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { EllipsisVertical, Users, Volume2, CircleHelp, LogOut } from 'lucide-react';
 import { AppBar } from '@/components/AppBar';
-import { CoachTip } from '@/components/CoachTip';
 import { IconButton } from '@/components/IconButton';
 import { BottomSheet } from '@/components/BottomSheet';
 import { Dialog } from '@/components/Dialog';
@@ -26,7 +25,7 @@ export function LiveToken({ tokenId, initial }: { tokenId:string; initial:Token 
   const router=useRouter(); const db=React.useMemo(()=>createClient(),[]);
   React.useEffect(()=>{setSound((localStorage.getItem(`token-sound-${tokenId}`)??localStorage.getItem('token-audio-all'))==='true'); const online=()=>setOffline(false); const off=()=>setOffline(true); window.addEventListener('online',online);window.addEventListener('offline',off);
     const refresh=async()=>{const {data}=await db.rpc('customer_token_detail',{p_token_id:tokenId});if(data?.result==='ok')setToken(data);};
-    const timer=window.setInterval(refresh,1500); const channel=db.channel(`customer-token-${tokenId}`).on('postgres_changes',{event:'*',schema:'public',table:'tokens',filter:`id=eq.${tokenId}`},refresh).on('postgres_changes',{event:'*',schema:'public',table:'sessions',filter:`id=eq.${initial.session_id}`},refresh).subscribe();
+    const timer=window.setInterval(()=>{if(document.visibilityState==='visible')refresh()},15000); const channel=db.channel(`customer-token-${tokenId}`).on('postgres_changes',{event:'*',schema:'public',table:'tokens',filter:`id=eq.${tokenId}`},refresh).on('postgres_changes',{event:'*',schema:'public',table:'sessions',filter:`id=eq.${initial.session_id}`},refresh).subscribe();
     return()=>{window.clearInterval(timer);window.removeEventListener('online',online);window.removeEventListener('offline',off);db.removeChannel(channel)};
   },[db,initial.session_id,tokenId]);
   React.useEffect(()=>{if(typeof window==='undefined')return;const q=new URLSearchParams(window.location.search);if(!['issued','changed'].includes(q.get('t')||''))return;const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);const standalone=('standalone'in navigator&&(navigator as Navigator&{standalone?:boolean}).standalone===true)||window.matchMedia('(display-mode: standalone)').matches;const seen=sessionStorage.getItem(`setup-shown-${tokenId}`);if(seen)return;sessionStorage.setItem(`setup-shown-${tokenId}`,'1');if(ios&&!standalone){const count=Number(localStorage.getItem('iphone-setup-count')||'0');if(count<2)setPrompt('iphone');return;}if('Notification'in window&&Notification.permission==='denied')setPushError(true);if('Notification'in window&&Notification.permission==='default'&&localStorage.getItem('notification-prompt-dismissed')!=='true')setPrompt('notification');},[tokenId]);
@@ -44,7 +43,7 @@ export function LiveToken({ tokenId, initial }: { tokenId:string; initial:Token 
   return <>
     <AppBar title={token.queue_name} onBack={()=>router.back()} rightActions={['waiting','serving'].includes(token.token_status)?<IconButton icon={<EllipsisVertical/>} aria-label="Aur options" onClick={()=>setMenu(true)} testId="live.more"/>:null} testId="live.appbar"/>
     <main className="container page tight" data-testid="live">
-      <CoachTip id="live-token" message="Yahan aap apne token aur line ki sthiti dekhein." />
+
       {offline&&<Banner variant="offline" testId="live.banner"/>}
       {pushError&&<Banner variant="offline" customText="Notification band hai. Baari aane par sirf is screen par pata chalega." testId="live.notification.disabled"/>}
       {notice&&<p role="status" className="t-body-sm">{notice}</p>}

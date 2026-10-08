@@ -60,7 +60,6 @@ export const ListRow: React.FC<ListRowProps> = ({
       onMouseDown={() => setPressed(true)}
       onMouseUp={() => setPressed(false)}
       onMouseLeave={() => setPressed(false)}
-      onTouchStart={() => setPressed(true)}
       onTouchEnd={() => setPressed(false)}
       style={{
         minHeight: "56px",
@@ -228,6 +227,7 @@ export interface QueueCardProps {
   subText?: string;
   closedReason?: string;
   onClick?: () => void;
+  onPrefetch?: () => void;
   testId?: string;
 }
 
@@ -239,6 +239,7 @@ export const QueueCard: React.FC<QueueCardProps> = ({
   subText,
   closedReason,
   onClick,
+  onPrefetch,
   testId,
 }) => {
   const [pressed, setPressed] = React.useState(false);
@@ -247,10 +248,12 @@ export const QueueCard: React.FC<QueueCardProps> = ({
     <Card
       testId={testId}
       onClick={onClick}
+      onMouseEnter={onPrefetch}
+      onFocus={onPrefetch}
+      onTouchStart={() => { onPrefetch?.(); setPressed(true); }}
       onMouseDown={() => setPressed(true)}
       onMouseUp={() => setPressed(false)}
       onMouseLeave={() => setPressed(false)}
-      onTouchStart={() => setPressed(true)}
       onTouchEnd={() => setPressed(false)}
       style={{
         cursor: onClick ? "pointer" : "default",
