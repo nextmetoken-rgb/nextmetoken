@@ -9,7 +9,6 @@ import { QRFrame } from '@/components/QRFrame';
 import { Toast } from '@/components/Toast';
 import { downloadQrPng } from '@/lib/qr';
 import { t } from '@/lib/i18n';
-import { ToggleRow } from '@/components/Toggle';
 import { useOnline } from '@/lib/useOnline';
 import { PrintSheet } from './PrintSheet';
 
@@ -19,7 +18,8 @@ export default function QrScreen({ id, code, title, created }: Props) {
   const router = useRouter();
   const online = useOnline();
   const [link, setLink] = useState('');
-  const [withInfo, setWithInfo] = useState(true);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [printSelection, setPrintSelection] = useState<string[]>([]);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(created ? { msg: t('qr.created'), type: 'success' } : null);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function QrScreen({ id, code, title, created }: Props) {
   }, [code, created, id]);
 
   const save = async () => {
-    try { await downloadQrPng(link, `qr-${code}.png`, { businessName: title, withInfo }); } catch { setToast({ msg: t('qr.saveError'), type: 'error' }); }
+    try { for(const option of selected) await downloadQrPng(link, `qr-${code}-${option}.png`, { businessName: title, withInfo:option==='info' }); } catch { setToast({ msg: t('qr.saveError'), type: 'error' }); }
   };
 
   return (
@@ -38,14 +38,14 @@ export default function QrScreen({ id, code, title, created }: Props) {
       <main className="container page tight qr-page" data-testid="qr" style={{ paddingTop: 'var(--sp-6)' }}>
         {link && <QRFrame businessName={title} value={link} testId="qr.frame" />}
         <div className="qr-actions">
-          <div className="qr-info-option"><ToggleRow label="Business info ke saath download karein" helperText="Naam, Next Me Token aur website link QR ke saath honge." checked={withInfo} onChange={setWithInfo} testId="qr.with-info" /></div>
-          <Button fullWidth icon={<Printer size={20} />} onClick={() => window.print()} disabled={!link} testId="qr.print">{t('qr.print')}</Button>
-          <Button fullWidth variant="secondary" icon={<Download size={20} />} onClick={save} disabled={!link} testId="qr.save">{t('qr.save')}</Button>
+          <p className="t-label">Save ya print ke liye design chunein</p><div className="qr-select-options">{[['qr','Sirf QR','Seedha scan karne wala QR'],['info','QR + business info','Business naam aur scan nirdesh ke saath']].map(([id,label,help])=><button type="button" key={id} aria-pressed={selected.includes(id)} onClick={()=>setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id])}><span className="qr-option-check">{selected.includes(id)?'✓':''}</span><span><strong>{label}</strong><small>{help}</small></span></button>)}</div>
+          <Button fullWidth icon={<Printer size={20} />} onClick={() => {setPrintSelection(selected);window.setTimeout(()=>window.print(),0)}} disabled={!link||selected.length===0} testId="qr.print">{t('qr.print')}</Button>
+          <Button fullWidth variant="secondary" icon={<Download size={20} />} onClick={save} disabled={!link||selected.length===0} testId="qr.save">{t('qr.save')}</Button>
           <p className="t-caption qr-hint" data-testid="qr.hint" style={{ marginTop: 'var(--sp-1)' }}>{t('qr.hint')}</p>
           <Button fullWidth variant="tertiary" href={`/app/business/${id}`} testId="qr.console">Back</Button>
         </div>
       </main>
-      {link && <PrintSheet title={title} value={link} />}
+      {link && <PrintSheet title={title} value={link} variants={printSelection} />}
       {toast && <Toast type={toast.type} message={toast.msg} hasBottomNav onDismiss={() => setToast(null)} />}
     </>
   );

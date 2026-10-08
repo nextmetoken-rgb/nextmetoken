@@ -2,8 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomSheet } from '@/components/BottomSheet';
-import { Dialog } from '@/components/Dialog';
-import { AlertTriangle, Plus, Store } from 'lucide-react';
+import { AlertTriangle, Plus, Store, Coins } from 'lucide-react';
 import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { CoachTip } from '@/components/CoachTip';
@@ -22,13 +21,12 @@ export default function BusinessList() {
   const online = useOnline();
   const [state, setState] = useState<Load>({ kind: 'loading' });
   const [selected, setSelected] = useState<QueueRow | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [actionBusy, setActionBusy] = useState(false);
 
   const load = useCallback(async () => {
     const { data, error } = await createClient()
       .from('queues')
-      .select('id,name,counter_name,status,start_number,created_at,sessions(id,started_at,ended_at,current_number,tokens(status))')
+      .select('id,name,counter_name,book_id,paid_days,test_days,trial_ends_at,status,start_number,created_at,sessions(id,started_at,ended_at,current_number,tokens(status))')
       .is('deleted_at', null);
     setState(prev => (error || !data ? (prev.kind === 'ok' ? prev : { kind: 'error' }) : { kind: 'ok', rows: data as unknown as QueueRow[], at: Date.now() }));
   }, []);
@@ -38,22 +36,17 @@ export default function BusinessList() {
 
   const banner = !online ? <Banner variant="offline" minutesAgo={state.kind === 'ok' ? Math.floor((Date.now() - state.at) / 60000) : 0} testId="biz.offline" /> : null;
 
-  const closedAction = async (rpc: 'owner_resume_queue' | 'owner_restart' | 'owner_delete_queue') => {
+  const closedAction = async (rpc: 'owner_resume_queue' | 'owner_restart') => {
     if (!selected || actionBusy) return;
     setActionBusy(true);
-    const args = rpc === 'owner_restart'
-      ? { p_queue_id: selected.id, p_start_number: selected.start_number ?? 1 }
-      : rpc === 'owner_delete_queue'
-        ? { p_queue_id: selected.id, p_permanent: false }
-        : { p_queue_id: selected.id };
+    const args = rpc === 'owner_restart' ? { p_queue_id: selected.id } : { p_queue_id: selected.id };
     const { data, error } = await createClient().rpc(rpc, args);
     setActionBusy(false);
     if (error || data?.result !== 'ok') return;
     const id = selected.id;
     setSelected(null);
-    setConfirmDelete(false);
     await load();
-    if (rpc !== 'owner_delete_queue') router.push(`/app/business/${id}`);
+    router.push(`/app/business/${id}`);
   };
 
   if (state.kind === 'loading' && online) {
@@ -87,6 +80,7 @@ export default function BusinessList() {
     <>{banner}
     <main className="container page tight" data-testid="business">
       {items.length>0 && <CoachTip id="business" message="Yahan apni queue banayein aur manage karein."/>}
+        {items[0] && <button type="button" className="business-days-card" onClick={()=>router.push('/app/business/funds')}><span className="business-days-coin"><Coins size={21}/></span><span className="business-days-text"><b>{(items[0].q.paid_days||0)+(items[0].q.test_days||0)} din</b><small>Balance · ₹1 = 1 din</small></span><Plus size={19}/></button>}
         {active.length > 0 && (
           <div className="biz-list" data-testid="biz.list">
             {active.map(({ q, s }) => (
@@ -95,7 +89,7 @@ export default function BusinessList() {
             ))}
           </div>
         )}
-        <Button fullWidth icon={<Plus size={20} />} onClick={() => router.push('/app/business/new')} testId="biz.new">{t('biz.new')}</Button>
+        {items.length===0&&<Button fullWidth icon={<Plus size={20} />} onClick={() => router.push('/app/business/new')} testId="biz.new">{t('biz.new')}</Button>}
         {old.length > 0 && (
           <section className="biz-old" data-testid="biz.old">
             <h2 className="t-overline biz-old-h">{t('biz.old')}</h2>
@@ -111,10 +105,8 @@ export default function BusinessList() {
           {selected?.sessions.some(session => session.tokens.some(token => token.status === 'waiting' || token.status === 'serving')) && <Button fullWidth variant="secondary" loading={actionBusy} onClick={() => void closedAction('owner_resume_queue')}>Jahan chhoda tha wahan se</Button>}
           <Button fullWidth variant="secondary" onClick={() => selected && router.push(`/app/business/${selected.id}/history`)}>History dekhein</Button>
           <Button fullWidth variant="secondary" onClick={() => selected && router.push(`/app/business/${selected.id}/settings`)}>Settings badlein</Button>
-          <Button fullWidth variant="danger-text" onClick={() => setConfirmDelete(true)}>Delete karein</Button>
         </div>
       </BottomSheet>
-      <Dialog isOpen={confirmDelete} title="Queue hamesha ke liye delete karein?" body="Queue, uske tokens aur history turant delete honge. Is action ko wapas nahi kiya ja sakta." primaryLabel={actionBusy ? 'Rukiye…' : 'Hamesha ke liye delete karein'} primaryVariant="danger-filled" onPrimary={() => void closedAction('owner_delete_queue')} onCancel={() => setConfirmDelete(false)} testId="biz.closed.delete" />
     </>
   );
 }
