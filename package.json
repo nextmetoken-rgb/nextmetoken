@@ -15,14 +15,12 @@
     "@sentry/nextjs": "^11.1.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
-    "@types/web-push": "^3.6.4",
     "jsqr": "^1.4.0",
     "lucide-react": "^0.400.0",
     "next": "^14.2.15",
     "qrcode-generator": "^2.0.4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "web-push": "^3.6.7"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

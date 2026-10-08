@@ -48,18 +48,3 @@ self.addEventListener('fetch', event => {
     return Response.error();
   }));
 });
-self.addEventListener('push', event => {
-  event.waitUntil((async () => {
-    let payload = { title: 'Next Me Token', body: 'Aapki line update hui hai.', url: '/app/tokens' };
-    try { payload = { ...payload, ...event.data.json() }; } catch {}
-    await self.registration.showNotification(payload.title, { body: payload.body, icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', data: { url: payload.url }, tag: payload.tag || 'tokenapp-update' });
-  })());
-});
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  const target = event.notification.data?.url || '/app/tokens';
-  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
-    for (const client of clients) { if ('focus' in client) return client.navigate(target).then(page => page?.focus()); }
-    return self.clients.openWindow(target);
-  }));
-});

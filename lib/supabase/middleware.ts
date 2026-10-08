@@ -5,6 +5,9 @@ import { supabaseEnv } from './env';
 const PROTECTED = ['/app', '/onboarding'];
 
 export async function updateSession(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const isProtected = PROTECTED.some(p => path === p || path.startsWith(`${p}/`));
+  if (!isProtected) return NextResponse.next({ request });
   const { url, key } = supabaseEnv();
   let response = NextResponse.next({ request });
   const supabase = createServerClient(url, key, {
@@ -18,9 +21,7 @@ export async function updateSession(request: NextRequest) {
     },
   });
   const { data: { user } } = await supabase.auth.getUser();
-  const path = request.nextUrl.pathname;
-  const isProtected = PROTECTED.some(p => path === p || path.startsWith(`${p}/`));
-  if (!user && isProtected) {
+  if (!user) {
     const login = request.nextUrl.clone();
     login.pathname = '/login';
     login.search = `?next=${encodeURIComponent(path + request.nextUrl.search)}`;

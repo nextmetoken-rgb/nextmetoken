@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { Moon } from "lucide-react";
 import { Button } from "@/components/Button";
 import { IconButton } from "@/components/IconButton";
 import { AppBar } from "@/components/AppBar";
@@ -13,12 +14,10 @@ import { NumberFlip } from "@/components/NumberFlip";
 import { ProgressLine } from "@/components/ProgressLine";
 import { BottomSheet } from "@/components/BottomSheet";
 import { Dialog } from "@/components/Dialog";
-import { Toast, ToastType } from "@/components/Toast";
 import { Banner } from "@/components/Banner";
 import { Skeleton } from "@/components/Skeleton";
 import { Spinner } from "@/components/Spinner";
 import { EmptyState } from "@/components/EmptyState";
-import { CoachMark } from "@/components/CoachMark";
 import { StepDots } from "@/components/StepDots";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { SwipeRow } from "@/components/SwipeRow";
@@ -27,7 +26,7 @@ import { ViewfinderOverlay } from "@/components/ViewfinderOverlay";
 import { GuideCard } from "@/components/GuideCard";
 import { StickyBar } from "@/components/StickyBar";
 import { Countdown } from "@/components/Countdown";
-import { Store, ArrowLeft, Bell, Search, Info } from "lucide-react";
+import { Store, ArrowLeft, Search, Info } from "lucide-react";
 export default function ComponentsShowcasePage() {
   const [navTab, setNavTab] = React.useState<NavTab>("tokens");
   const [textValue, setTextValue] = React.useState("Gupta Sweets");
@@ -36,13 +35,6 @@ export default function ComponentsShowcasePage() {
   const [flipNum, setFlipNum] = React.useState(12);
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [toastState, setToastState] = React.useState<{
-    show: boolean;
-    msg: string;
-    type: ToastType;
-    action?: string;
-  }>({ show: false, msg: "", type: "info" });
-  const [coachOpen, setCoachOpen] = React.useState(false);
   const [viewfinderOpen, setViewfinderOpen] = React.useState(false);
   const [guideOpen, setGuideOpen] = React.useState(false);
   const [segmentedVal, setSegmentedVal] = React.useState("today");
@@ -51,7 +43,7 @@ export default function ComponentsShowcasePage() {
     <div style={{ paddingBottom: "120px" }}>
       <AppBar
         title="Component Showcase"
-        rightActions={<IconButton icon={<Bell size={20} />} aria-label="Notifications" />}
+        
       />
       <div className="container" style={{ display: "flex", flexDirection: "column", gap: "32px", paddingTop: "24px" }}>
         <section className="card">
@@ -76,7 +68,7 @@ export default function ComponentsShowcasePage() {
             <IconButton icon={<ArrowLeft size={24} />} aria-label="Back" />
             <IconButton icon={<Search size={24} />} aria-label="Search" />
             <div style={{ backgroundColor: "#111827", padding: "8px", borderRadius: "12px" }}>
-              <IconButton icon={<Bell size={24} />} aria-label="Dark mode icon" variant="on-dark" />
+              <IconButton icon={<Moon size={24} />} aria-label="Dark mode icon" variant="on-dark" />
             </div>
           </div>
         </section>
@@ -171,21 +163,12 @@ export default function ComponentsShowcasePage() {
           <ProgressLine percentage={40} compact />
         </section>
         <section className="card" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <h2 className="t-h2">2.12 Sheet, 2.13 Dialog, 2.14 Toast, 2.19 CoachMark</h2>
+          <h2 className="t-h2">2.12 Sheet, 2.13 Dialog</h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
             <Button size="sm" onClick={() => setSheetOpen(true)}>Open BottomSheet</Button>
             <Button size="sm" variant="danger-outline" onClick={() => setDialogOpen(true)}>Open Delete Dialog</Button>
-            <Button size="sm" variant="secondary" onClick={() => setToastState({ show: true, msg: "#14 hata diya", type: "info", action: "Undo" })}>
-              Show Toast (Undo)
-            </Button>
-            <Button size="sm" variant="tertiary" onClick={() => setCoachOpen(!coachOpen)}>Toggle CoachMark</Button>
             <Button size="sm" variant="secondary" onClick={() => setViewfinderOpen(true)}>Camera Viewfinder</Button>
           </div>
-          <CoachMark
-            isOpen={coachOpen}
-            message="Naya token lene ke liye yahan tap karein!"
-            onDismiss={() => setCoachOpen(false)}
-          />
         </section>
         <section style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <h2 className="t-h2">2.15 Banners</h2>
@@ -228,7 +211,7 @@ export default function ComponentsShowcasePage() {
           <SwipeRow
             personName="Sunita Devi"
             personNumber={14}
-            onRemove={() => setToastState({ show: true, msg: "#14 hata diya", type: "info", action: "Undo" })}
+            onRemove={() => {}}
           >
             <PersonRow number={14} name="Sunita Devi" metaText="Intezar me: 12 min" chipVariant="waiting" />
           </SwipeRow>
@@ -273,20 +256,12 @@ export default function ComponentsShowcasePage() {
         primaryVariant="danger-filled"
         onPrimary={() => {
           setDialogOpen(false);
-          setToastState({ show: true, msg: "#14 hata diya", type: "info", action: "Undo" });
+          setDialogOpen(false);
         }}
         cancelLabel="Nahi"
         onCancel={() => setDialogOpen(false)}
       />
-      {toastState.show && (
-        <Toast
-          message={toastState.msg}
-          type={toastState.type}
-          actionLabel={toastState.action}
-          onAction={() => setToastState({ ...toastState, show: false })}
-          onDismiss={() => setToastState({ ...toastState, show: false })}
-        />
-      )}
+
       {viewfinderOpen && (
         <ViewfinderOverlay
           onTorchToggle={() => {}}
