@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Store, Stethoscope, Wrench, Building2, Sparkles } from 'lucide-react';
+import { Store, Stethoscope, Wrench, Sparkles } from 'lucide-react';
 import Logo from '@/components/Logo';
 import ButtonLink from '@/components/Button';
 import GuideCard from '@/components/GuideCard';
@@ -8,9 +8,10 @@ import { GuideAccordions } from '@/components/home/GuideAccordions';
 import { t, type Key } from '@/lib/i18n';
 import { brand } from '@/lib/brand';
 import { InstallButton } from '@/components/InstallButton';
+import { BookLookup } from '@/components/home/BookLookup';
 
-const faq = [1, 2, 3, 4] as const;
-const who = [[Stethoscope, 'Clinic aur lab'], [Wrench, 'Repair aur service center'], [Building2, 'Bank aur office counter'], [Store, 'Mithai aur chai ki dukaan'], [Sparkles, 'Aur kai jagah']] as const;
+const faq = [5, 1, 2, 3, 4] as const;
+const who = [[Store, 'Salon'], [Stethoscope, 'Clinic'], [Wrench, 'Repair shop'], [Sparkles, 'Aur kai jagah']] as const;
 
 export default function Home() {
   return (
@@ -34,6 +35,8 @@ export default function Home() {
           <h2 className="t-h2">Shuru kaise karein</h2>
           <GuideAccordions />
         </section>
+
+        <BookLookup />
 
         <section className="stack-4" data-testid="home.who">
           <h2 className="t-h2">{t('who.title')}</h2>

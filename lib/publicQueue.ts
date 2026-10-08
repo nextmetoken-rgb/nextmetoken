@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
-export type PublicState = 'live' | 'paused' | 'limit' | 'closed' | 'invalid';
+export type PublicState = 'live' | 'paused' | 'intake_paused' | 'limit' | 'closed' | 'expired' | 'invalid';
 export interface PublicQueue {
   state: PublicState;
   name?: string;

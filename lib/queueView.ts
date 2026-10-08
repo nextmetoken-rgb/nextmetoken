@@ -4,6 +4,10 @@ export interface QueueRow {
   id: string;
   name: string;
   counter_name: string | null;
+  book_id: string;
+  paid_days: number;
+  test_days: number;
+  trial_ends_at: string;
   status: string;
   start_number?: number;
   created_at: string;
