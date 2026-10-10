@@ -30,6 +30,6 @@ export function DemoTicket() {
   return <div className="demo-ticket" aria-label={`Abhi ${current || '—'}, aapka token ${mine}`}>
     <div className="demo-ticket-main"><span className="t-overline">ABHI CHAL RAHA HAI</span>{current ? <NumberFlip value={current} className="demo-number" /> : <span className="demo-number">—</span>}</div>
     <div className="ticket-perf" aria-hidden="true" />
-    <div className="demo-ticket-mine"><span className="t-overline">AAPKA TOKEN</span>{start ? <NumberFlip value={mine} className="demo-number demo-mine" /> : <span className="demo-number demo-mine">—</span>}</div>
+    <div className="demo-ticket-mine"><span className="t-overline">AAPKA TOKEN</span>{start ? <NumberFlip value={mine} className="demo-number demo-mine" /> : <span className="demo-number demo-mine">—</span>}<span className="tk-barcode" aria-hidden="true" /></div>
   </div>;
 }
