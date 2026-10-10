@@ -1,3 +1,5 @@
+import { brand } from '@/lib/brand';
+
 export const QR_DARK = '#111827';
 export const QR_LIGHT = '#FFFFFF';
 export const QR_QUIET = 4;
@@ -22,7 +24,7 @@ export async function qrSvgMarkup(value: string, px: number): Promise<string> {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="${QR_LIGHT}"/><path fill="${QR_DARK}" d="${path}"/></svg>`;
 }
 
-export async function downloadQrPng(value: string, filename: string, options: { businessName?: string; withInfo?: boolean; px?: number } = {}): Promise<void> {
+export async function downloadQrPng(value: string, filename: string, options: { businessName?: string; bookId?: string; withInfo?: boolean; px?: number } = {}): Promise<void> {
   const px = options.px ?? 1024;
   const withInfo = options.withInfo ?? false;
   const qrPx = withInfo ? 760 : px;
@@ -37,13 +39,37 @@ export async function downloadQrPng(value: string, filename: string, options: { 
     if (!ctx) throw new Error('canvas');
     ctx.imageSmoothingEnabled = false;
     if (withInfo) {
-      const w=canvas.width,h=canvas.height;ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#0B6B63';ctx.lineWidth=24;ctx.strokeRect(12,12,w-24,h-24);
-      ctx.fillStyle='#0B6B63';ctx.fillRect(24,24,w-48,248);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='700 54px system-ui,sans-serif';ctx.fillText((options.businessName||'Business').slice(0,40),w/2,102,w-100);ctx.font='700 34px system-ui,sans-serif';ctx.fillText('LINE ME KHADE NA RAHEIN',w/2,164);ctx.font='600 26px system-ui,sans-serif';ctx.fillText('QR scan karke token lein aur apni baari par aayein',w/2,220,w-100);
-      ctx.fillStyle='#111';ctx.beginPath();ctx.roundRect((w-qrPx)/2,310,qrPx,qrPx,28);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect((w-qrPx)/2+12,322,qrPx-24,qrPx-24);ctx.imageSmoothingEnabled=false;ctx.drawImage(img,(w-qrPx)/2+22,332,qrPx-44,qrPx-44);
-      ctx.fillStyle='#111';ctx.beginPath();ctx.roundRect(220,1100,w-440,64,32);ctx.fill();ctx.fillStyle='#fff';ctx.font='700 26px system-ui,sans-serif';ctx.fillText('Phone camera se yahan scan karein',w/2,1142);
-      ctx.fillStyle='#333';ctx.font='500 22px system-ui,sans-serif';ctx.fillText('QR na chale to browser me likhein',w/2,1210);ctx.fillStyle='#111';ctx.font='800 38px system-ui,sans-serif';ctx.fillText('nextmetoken.vercel.app',w/2,1260);
-      const cards=['LIVE UPDATE','GHAR SE TOKEN','MUFT AUR AASAAN'];const cw=350;cards.forEach((label,i)=>{const x=60+i*390;ctx.strokeStyle='#0B6B63';ctx.lineWidth=3;ctx.beginPath();ctx.roundRect(x,1310,cw,98,18);ctx.stroke();ctx.fillStyle='#0B6B63';ctx.font='700 20px system-ui,sans-serif';ctx.fillText(label,x+cw/2,1368)});
-      ctx.textAlign='left';ctx.fillStyle='#0B6B63';ctx.font='700 22px system-ui,sans-serif';ctx.fillText('BUSINESS OWNER KE LIYE',72,1470);ctx.fillStyle='#222';ctx.font='400 18px system-ui,sans-serif';['1. QR entrance par lagayein.','2. Customer phone camera se scan kare.','3. Walk-in ko counter se token dein.','4. Agla dabakar number bulayein.','5. Line pause ya end kar sakte hain.','6. Balance aur history Business me dekhein.'].forEach((line,i)=>ctx.fillText(line,72,1505+i*29));ctx.textAlign='center';ctx.fillStyle='#0B6B63';ctx.font='700 20px system-ui,sans-serif';ctx.fillText('Token App',w/2,1710);
+      const w = canvas.width, h = canvas.height, T = '#0B6B63', F = 'system-ui,sans-serif';
+      const host = (() => { try { return new URL(value).host; } catch { return 'nextmetoken.vercel.app'; } })();
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = T; ctx.lineWidth = 24; ctx.strokeRect(12, 12, w - 24, h - 24);
+      ctx.fillStyle = T; ctx.fillRect(24, 24, w - 48, 250);
+      ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.font = `800 70px ${F}`;
+      ctx.fillText((options.businessName || 'Business').slice(0, 40), w / 2, 140, w - 120);
+      ctx.beginPath(); ctx.roundRect(w / 2 - 230, 184, 460, 60, 30); ctx.fill();
+      ctx.fillStyle = T; ctx.font = `700 30px ${F}`; ctx.fillText('Line me khade na rahein', w / 2, 226);
+      const cs = 700, cx = (w - cs) / 2 - 30, cy = 330, cw = cs + 60;
+      ctx.fillStyle = '#E6F4F1'; ctx.beginPath(); ctx.roundRect(cx, cy + 10, cw, cw, 40); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = T; ctx.lineWidth = 14; ctx.beginPath(); ctx.roundRect(cx, cy, cw, cw, 40); ctx.fill(); ctx.stroke();
+      ctx.imageSmoothingEnabled = false; ctx.drawImage(img, cx + 30, cy + 30, cs, cs);
+      ctx.fillStyle = T; ctx.beginPath(); ctx.roundRect(w / 2 - 290, cy + cw - 36, 580, 76, 38); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = `800 38px ${F}`; ctx.fillText('Scan karke token lein', w / 2, cy + cw + 16);
+      const steps = [['Phone camera se', 'QR scan karein'], ['Google se login karke', 'naam likhein'], ['Token lein, live number', 'dekhein, baari par aayein']];
+      steps.forEach((st, i) => {
+        const x = 60 + i * 390, y = 1170, bw = 340;
+        ctx.strokeStyle = T; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(x, y, bw, 150, 20); ctx.stroke();
+        ctx.fillStyle = T; ctx.beginPath(); ctx.arc(x + bw / 2, y + 36, 22, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = `800 26px ${F}`; ctx.fillText(String(i + 1), x + bw / 2, y + 45);
+        ctx.fillStyle = '#111'; ctx.font = `600 24px ${F}`; ctx.fillText(st[0], x + bw / 2, y + 96, bw - 20); ctx.fillText(st[1], x + bw / 2, y + 128, bw - 20);
+      });
+      ctx.fillStyle = '#F2FAF8'; ctx.strokeStyle = T; ctx.lineWidth = 3; ctx.setLineDash([12, 8]); ctx.beginPath(); ctx.roundRect(110, 1350, w - 220, 170, 24); ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#222'; ctx.font = `500 26px ${F}`; ctx.fillText(`QR na chale to ${host} kholein aur ye Book ID likhein`, w / 2, 1398, w - 260);
+      if (options.bookId) { ctx.font = `800 52px ${F}`; const tw = Math.min(ctx.measureText(options.bookId).width + 90, w - 300); ctx.fillStyle = T; ctx.beginPath(); ctx.roundRect(w / 2 - tw / 2, 1424, tw, 76, 20); ctx.fill(); ctx.fillStyle = '#fff'; ctx.fillText(options.bookId, w / 2, 1480, tw - 40); }
+      ctx.strokeStyle = '#D1D5DB'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(72, 1560); ctx.lineTo(w - 72, 1560); ctx.stroke();
+      ctx.textAlign = 'left'; ctx.fillStyle = T; ctx.font = `700 22px ${F}`; ctx.fillText('BUSINESS OWNER KE LIYE', 72, 1595);
+      ctx.fillStyle = '#333'; ctx.font = `400 21px ${F}`;
+      ['1. QR ko entrance par lagayein.', '2. Walk-in ko counter se token dein.', '3. Agla dabakar number bulayein.', '4. Line roken ya din khatam karein.'].forEach((line, i) => ctx.fillText(line, i % 2 ? 640 : 72, 1632 + Math.floor(i / 2) * 32));
+      ctx.textAlign = 'center'; ctx.fillStyle = T; ctx.font = `800 26px ${F}`; ctx.fillText(brand.name, w / 2, 1712);
     } else { ctx.imageSmoothingEnabled = false; ctx.drawImage(img, 0, 0, px, px); }
     const blob: Blob = await new Promise((ok, fail) => canvas.toBlob(b => (b ? ok(b) : fail(new Error('blob'))), 'image/png'));
     const a = document.createElement('a');
