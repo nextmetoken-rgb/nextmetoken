@@ -2,63 +2,34 @@
 
 import React from "react";
 import { QRCodeSVG } from "./QRCodeSVG";
+import { brand } from "@/lib/brand";
 
 export interface QRFrameProps {
   businessName: string;
   value?: string;
+  bookId?: string;
   testId?: string;
 }
 
 export const QRFrame: React.FC<QRFrameProps> = ({
   businessName,
-  value = "https://tokenapp.in/q/demo",
+  value = "https://nextmetoken.vercel.app/q/demo",
+  bookId,
   testId = "qr-frame",
-}) => {
-  return (
-    <div
-      data-testid={testId}
-      style={{
-        backgroundColor: "#FFFFFF",
-        borderRadius: "20px",
-        border: "1px solid var(--c-border)",
-        padding: "20px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        maxWidth: "320px",
-        margin: "0 auto",
-      }}
-    >
-      <div
-        style={{
-          width: "clamp(240px, 70vw, 280px)",
-          height: "clamp(240px, 70vw, 280px)",
-          display: "grid",
-          placeItems: "center",
-          backgroundColor: "#FFFFFF",
-        }}
-      >
-        <QRCodeSVG value={value} size="100%" label={`QR code: ${businessName}`} />
-      </div>
-
-      <h3
-        className="t-h3"
-        style={{
-          color: "var(--c-text)",
-          textAlign: "center",
-          marginTop: "16px",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          width: "100%",
-        }}
-      >
-        {businessName}
-      </h3>
-      <p className="t-body-sm" style={{ color: "var(--c-text-2)", textAlign: "center", marginTop: "4px" }}>
-        Scan karke token lein
-      </p>
+}) => (
+  <div className="qrf" data-testid={testId}>
+    <h3 className="qrf-name">{businessName}</h3>
+    <div className="qrf-card">
+      <span className="qrf-corner tl" /><span className="qrf-corner tr" /><span className="qrf-corner bl" /><span className="qrf-corner br" />
+      <div className="qrf-qr"><QRCodeSVG value={value} size="100%" label={`QR code: ${businessName}`} /></div>
     </div>
-  );
-};
+    <p className="qrf-scan">Scan karke token lein</p>
+    <ol className="qrf-steps">
+      <li><b>1</b><span>Phone camera se QR scan karein</span></li>
+      <li><b>2</b><span>Google se login karke naam likhein</span></li>
+      <li><b>3</b><span>Token lein aur live number dekhein</span></li>
+    </ol>
+    {bookId && <div className="qrf-book"><small>QR na chale to Book ID likhein</small><strong>{bookId}</strong></div>}
+    <p className="qrf-brand">{brand.name}</p>
+  </div>
+);
