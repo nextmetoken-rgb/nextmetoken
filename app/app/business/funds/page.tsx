@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
 import { ShieldCheck, Sparkles } from 'lucide-react';
 import { AppBar } from '@/components/AppBar';
 import { Button } from '@/components/Button';
@@ -21,16 +22,11 @@ export default function BusinessFunds(){
   const valid=Number.isInteger(n)&&n>=10&&n<=500;
 
   return <>
-    <AppBar title="Din add karein" onBack={()=>history.back()}/>
+    <AppBar title="Din add karein" onBack={()=>history.back()} rightActions={<Link href="/app/business/funds/history" className="funds-hist-link" data-testid="funds.history">History</Link>}/>
     <main className="container page tight funds-page">
       <section className="funds-hero" aria-label="Bache hue din">
         <DaysCoin days={total??'—'} size="lg"/>
         <p className="funds-hero-title">Bache hue din</p>
-        <div className="funds-split">
-          <span><b>{balance?.paid_days??'—'}</b>Paid</span>
-          <span><b>{balance?.test_days??'—'}</b>Test</span>
-          <span><b>{balance?trialLeft:'—'}</b>Trial</span>
-        </div>
       </section>
 
       <section className="funds-box" aria-label="Amount chunein">
