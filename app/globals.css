@@ -221,3 +221,21 @@ html,body{max-width:100%;overflow-x:clip}p,h1,h2,h3,button,a{overflow-wrap:anywh
 
 .owner-inline-status{position:relative;margin:8px 0;padding:10px 14px;border:1px solid var(--c-border);border-radius:12px;background:var(--c-surface);color:var(--c-text);font-size:14px;line-height:20px}
 
+/* Owner console: quick buttons + toast (light & dark) */
+.owner-quick{display:flex;gap:6px;overflow-x:auto;padding:2px 0;-webkit-overflow-scrolling:touch}
+.owner-quick-btn{flex:1 0 auto;min-width:62px;min-height:52px;padding:6px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid var(--c-border);border-radius:var(--r-md);background:var(--c-surface);color:var(--c-text);font:600 11px/14px var(--font-sans);white-space:nowrap;box-shadow:var(--shadow-1)}
+.owner-quick-btn svg{color:var(--c-accent)}
+.owner-quick-btn:active{transform:scale(.97)}
+.owner-quick-btn:disabled{opacity:.5}
+.owner-quick-btn[aria-pressed=true]{background:var(--c-accent-soft);border-color:var(--c-accent-soft-border)}
+.owner-quick-ico{position:relative;display:inline-flex}
+.owner-dot{position:absolute;top:-2px;right:-4px;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--c-surface)}
+.owner-dot.on{background:var(--c-success)}.owner-dot.off{background:var(--c-danger)}
+.owner-toast-wrap{position:fixed;left:12px;right:12px;top:calc(var(--safe-top) + var(--appbar-h) + 6px);z-index:70;display:flex;justify-content:center;pointer-events:none}
+.owner-toast{pointer-events:none;max-width:420px;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:12px;border:1px solid var(--c-border-strong);background:var(--c-surface-2);color:var(--c-text);box-shadow:var(--shadow-3);font:500 14px/20px var(--font-sans);animation:toast-in var(--dur-base) var(--ease-decel)}
+.owner-toast.is-success{background:var(--c-success-soft);color:var(--c-text);border-color:var(--c-success)}
+.owner-toast.is-error{background:var(--c-danger-soft);color:var(--c-text);border-color:var(--c-danger)}
+.owner-toast-text{min-width:0;overflow-wrap:anywhere}
+.owner-toast-undo{pointer-events:auto;flex:none;min-height:32px;padding:0 12px;border:0;border-radius:8px;background:var(--c-accent);color:var(--c-on-accent);font:700 13px/16px var(--font-sans)}
+@keyframes toast-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
