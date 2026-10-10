@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CircleHelp, Clock3, MoreVertical, Moon, Pause, Play, QrCode, Search, Settings, Share2, Trash2, UserPlus, Users, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowUp, ChevronLeft, ChevronRight, CircleHelp, Clock3, Globe, MoreVertical, Moon, Pause, Play, QrCode, Search, Settings, Share2, Trash2, UserPlus, Users, Volume2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Banner } from '@/components/Banner';
 import { BottomSheet } from '@/components/BottomSheet';
@@ -779,6 +779,14 @@ export default function OwnerConsole({ initial }: { initial: ConsoleData }) {
             )}
           </Card>
 
+          <div className="owner-quick" role="group" aria-label="Quick options" data-testid="con.quick">
+            {!isClosed && <button type="button" className="owner-quick-btn" disabled={menuBusy} onClick={() => void togglePause()} data-testid="con.quick.pause">{data.queue.status === 'paused' ? <Play size={18} /> : <Pause size={18} />}<span>{data.queue.status === 'paused' ? 'Line chalu' : 'Line roko'}</span></button>}
+            {!isClosed && <button type="button" className="owner-quick-btn" disabled={menuBusy} aria-pressed={data.queue.intake_enabled} onClick={() => void toggleIntake()} data-testid="con.quick.online"><span className="owner-quick-ico"><Globe size={18} /><i className={`owner-dot ${data.queue.intake_enabled ? 'on' : 'off'}`} /></span><span>{data.queue.intake_enabled ? 'Online band' : 'Online chalu'}</span></button>}
+            {!isClosed && <button type="button" className="owner-quick-btn" onClick={() => setLifeDialog('end')} data-testid="con.quick.end"><Moon size={18} /><span>Din khatam</span></button>}
+            <button type="button" className="owner-quick-btn" onClick={() => router.push(`/app/business/${data.queue.id}/history`)} data-testid="con.quick.history"><Clock3 size={18} /><span>History</span></button>
+            <button type="button" className="owner-quick-btn" onClick={() => router.push(`/app/business/${data.queue.id}/settings`)} data-testid="con.quick.settings"><Settings size={18} /><span>Settings</span></button>
+          </div>
+
           {!isClosed && <Button variant="secondary" fullWidth icon={<UserPlus size={20} />} onClick={() => setSheet('walkin')} testId="con.walkin">Walk-in add karein</Button>}
 
           <div className="owner-stats t-caption" data-testid="con.stats">
@@ -853,12 +861,11 @@ export default function OwnerConsole({ initial }: { initial: ConsoleData }) {
     </main>
 
     {toast && (
-      <div role="status" aria-live="polite" key={toast.id}
-        style={{ position: 'fixed', left: 12, right: 12, bottom: 'calc(92px + env(safe-area-inset-bottom, 0px))', zIndex: 60, margin: '0 auto', maxWidth: 440, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
-          padding: '12px 16px', borderRadius: 14, boxShadow: '0 8px 24px rgba(0,0,0,.25)', fontSize: 15, fontWeight: 500,
-          background: toast.kind === 'error' ? '#b3261e' : 'var(--c-text, #1c1b1f)', color: '#fff' }}>
-        <span>{toast.text}</span>
-        {toast.undo && <button type="button" onClick={() => void undo()} style={{ background: 'transparent', border: 0, color: 'inherit', fontWeight: 700, textDecoration: 'underline', padding: 8, cursor: 'pointer' }}>Undo</button>}
+      <div className="owner-toast-wrap" key={toast.id}>
+        <div role="status" aria-live="polite" className={`owner-toast is-${toast.kind}`}>
+          <span className="owner-toast-text">{toast.text}</span>
+          {toast.undo && <button type="button" className="owner-toast-undo" onClick={() => void undo()}>Undo</button>}
+        </div>
       </div>
     )}
 
