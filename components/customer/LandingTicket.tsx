@@ -49,6 +49,7 @@ export function LandingTicket({ state, serving, next }: Props) {
           <div className="landing-ticket-stub">
             <div className="t-overline" style={{ color: fg2 }}>{t('land.next')}</div>
             <div className="t-display-l" style={{ marginTop: 'var(--sp-1)' }}>{next ?? '—'}</div>
+            <div className="tk-barcode" style={{ marginTop: 'var(--sp-3)' }} aria-hidden="true" />
           </div>
         </>
       )}
