@@ -9,6 +9,7 @@ export interface QueueRow {
   test_days: number;
   trial_ends_at: string;
   status: string;
+  intake_enabled?: boolean;
   start_number?: number;
   created_at: string;
   sessions: { id: string; started_at: string; ended_at: string | null; current_number: number | null; tokens: { status: string }[] }[];
@@ -39,3 +40,7 @@ export function sortQueues(rows: QueueRow[]) {
     .map(q => ({ q, s: summarize(q) }))
     .sort((a, b) => RANK[a.s.status] - RANK[b.s.status] || b.s.lastUsed.localeCompare(a.s.lastUsed));
 }
+
+/** Bache hue din = paid + test + trial ke bache din. */
+export const balanceDays = (q: { paid_days: number; test_days: number; trial_ends_at: string }, now = Date.now()) =>
+  (q.paid_days || 0) + (q.test_days || 0) + Math.max(0, Math.ceil((Date.parse(q.trial_ends_at) - now) / 86400000));
