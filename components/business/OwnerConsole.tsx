@@ -835,7 +835,7 @@ export default function OwnerConsole({ initial }: { initial: ConsoleData }) {
             <div className="console-qr-code">{origin && <QRCodeSVG value={`${origin}/q/${data.queue.code}`} size="100%" label={`Queue QR: ${data.queue.name}`} />}</div>
             <p className="t-label" style={{ textAlign: 'center' }}>{data.queue.name}</p>
             <p className="t-body-sm" style={{ textAlign: 'center' }}>Book ID: <strong>{data.queue.book_id}</strong></p>
-            <p className="t-caption" style={{ textAlign: 'center' }}>Balance: {balanceDays} din · Trial {fmtDate(data.queue.trial_ends_at)}</p>
+            <p className="t-caption" style={{ textAlign: 'center' }}>Balance: {balanceDays} din</p>
             <Button variant="secondary" fullWidth icon={<Share2 size={18} />} onClick={() => void shareLine()}>Link share karein</Button>
             <Button variant="tertiary" fullWidth href={`/app/business/${data.queue.id}/qr`}>QR dikhao / print</Button>
             <Button variant="tertiary" fullWidth href="/app/business/funds">Days add karein</Button>

@@ -145,7 +145,7 @@ export default function BusinessList() {
         <DaysCoin days={days} size="md" />
         <span className="days-card-text">
           <b>Bache hue din</b>
-          <small>Trial + balance · ₹1 = 1 din</small>
+          <small>₹1 = 1 din</small>
         </span>
         <span className="days-card-add"><Plus size={16} />Add</span>
       </button>
@@ -160,7 +160,6 @@ export default function BusinessList() {
           ))}
         </div>
       )}
-      <Button fullWidth variant="secondary" icon={<Plus size={20} />} onClick={() => router.push('/app/business/new')} testId="biz.new">{t('biz.new')}</Button>
       {old.length > 0 && (
         <section className="biz-old" data-testid="biz.old">
           <h2 className="t-overline biz-old-h">{t('biz.old')}</h2>

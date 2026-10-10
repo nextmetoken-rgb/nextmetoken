@@ -11,9 +11,9 @@ import { t } from '@/lib/i18n';
 import { useOnline } from '@/lib/useOnline';
 import { PrintSheet } from './PrintSheet';
 
-interface Props { id: string; code: string; title: string; created: boolean }
+interface Props { id: string; code: string; title: string; created: boolean; bookId?: string }
 
-export default function QrScreen({ id, code, title, created }: Props) {
+export default function QrScreen({ id, code, title, created, bookId }: Props) {
   const router = useRouter();
   const online = useOnline();
   const [link, setLink] = useState('');
@@ -27,7 +27,7 @@ export default function QrScreen({ id, code, title, created }: Props) {
   }, [code, created, id]);
 
   const save = async () => {
-    try { for(const option of selected) await downloadQrPng(link, `qr-${code}-${option}.png`, { businessName: title, withInfo:option==='info' }); } catch { setStatusMessage({ msg: t('qr.saveError'), type: 'error' }); }
+    try { for(const option of selected) await downloadQrPng(link, `qr-${code}-${option}.png`, { businessName: title, bookId, withInfo:option==='info' }); } catch { setStatusMessage({ msg: t('qr.saveError'), type: 'error' }); }
   };
 
   return (
@@ -35,16 +35,17 @@ export default function QrScreen({ id, code, title, created }: Props) {
       <AppBar title={t('qr.title')} onBack={() => router.push(`/app/business/${id}`)} testId="qr.appbar" />
       {!online && <Banner variant="offline" testId="qr.offline" />}
       <main className="container page tight qr-page" data-testid="qr" style={{ paddingTop: 'var(--sp-6)' }}>
-        {link && <QRFrame businessName={title} value={link} testId="qr.frame" />}
+        {link && <QRFrame businessName={title} value={link} bookId={bookId} testId="qr.frame" />}
+        <section className="qr-owner" data-testid="qr.owner"><h2>Owner ke liye</h2><ol><li>QR ko entrance par lagayein.</li><li>Walk-in ko counter se token dein, online customer khud token lenge.</li><li>Business page se Agla dabayein, line roken ya din khatam karein.</li></ol></section>
         <div className="qr-actions">
-          <p className="t-label">Save ya print ke liye design chunein</p><div className="qr-select-options">{[['qr','Sirf QR','Seedha scan karne wala QR'],['info','QR + business info','Business naam aur scan nirdesh ke saath']].map(([id,label,help])=><button type="button" key={id} aria-pressed={selected.includes(id)} onClick={()=>setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id])}><span className="qr-option-check">{selected.includes(id)?'✓':''}</span><span><strong>{label}</strong><small>{help}</small></span></button>)}</div>
+          <p className="t-label">Save ya print ke liye design chunein</p><div className="qr-select-options">{[['qr','Sirf QR','Seedha scan karne wala QR'],['info','QR + business info','Naam, scan ke steps, Book ID aur owner tips ke saath (A4)']].map(([id,label,help])=><button type="button" key={id} aria-pressed={selected.includes(id)} onClick={()=>setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id])}><span className="qr-option-check">{selected.includes(id)?'✓':''}</span><span><strong>{label}</strong><small>{help}</small></span></button>)}</div>
           <Button fullWidth icon={<Printer size={20} />} onClick={() => {setPrintSelection(selected);window.setTimeout(()=>window.print(),0)}} disabled={!link||selected.length===0} testId="qr.print">{t('qr.print')}</Button>
           <Button fullWidth variant="secondary" icon={<Download size={20} />} onClick={save} disabled={!link||selected.length===0} testId="qr.save">{t('qr.save')}</Button>
           <p className="t-caption qr-hint" data-testid="qr.hint" style={{ marginTop: 'var(--sp-1)' }}>{t('qr.hint')}</p>
           <Button fullWidth variant="tertiary" href={`/app/business/${id}`} testId="qr.console">Back</Button>
         </div>
       </main>
-      {link && <PrintSheet title={title} value={link} variants={printSelection} />}
+      {link && <PrintSheet title={title} value={link} bookId={bookId} variants={printSelection} />}
       {statusMessage&&<p role={statusMessage.type==='error'?'alert':'status'} className="t-body-sm" aria-live="polite">{statusMessage.msg}</p>}
     </>
   );
