@@ -4,6 +4,7 @@ import Logo from '@/components/Logo';
 import ButtonLink from '@/components/Button';
 import GuideCard from '@/components/GuideCard';
 import { DemoTicket } from '@/components/home/DemoTicket';
+import { BookLookup } from '@/components/home/BookLookup';
 import { HomeLanguagePicker } from '@/components/home/HomeLanguagePicker';
 import { GuideAccordions } from '@/components/home/GuideAccordions';
 import { t, type Key } from '@/lib/i18n';
@@ -31,6 +32,8 @@ export default function Home() {
           <DemoTicket />
           <div className="home-demo-warning" role="note"><strong>DEMO TICKET · YE ASLI TOKEN NAHI HAI</strong><span>Sahi token number paane ke liye login karein aur business ka QR scan karein.</span></div>
         </section>
+
+        <section data-testid="home.book"><BookLookup /></section>
 
         <section className="stack-4" data-testid="home.how">
           <h2 className="t-h2">Shuru kaise karein</h2>
