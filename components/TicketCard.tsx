@@ -182,6 +182,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
                   <Chip variant="estimate" label="andaza" />
                 </div>
               </div>
+              <div className="tk-barcode" style={{ gridColumn: "1 / -1", color: theme.primary }} aria-hidden="true" />
             </div>
           </>
         )}
